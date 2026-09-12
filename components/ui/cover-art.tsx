@@ -1,0 +1,87 @@
+import { cn } from "@/lib/utils";
+
+// Deterministic gradient placeholder art for a game cover. We never fetch or
+// reproduce real publisher box art (copyrighted) — this generates distinct,
+// premium-feeling art per title using a hash of the title + genre.
+const PALETTES = [
+  ["#0ea5c7", "#1e293b", "#7c3aed"],
+  ["#e14bd6", "#1c1032", "#35e0ee"],
+  ["#4f7dfb", "#0a1120", "#22d3a8"],
+  ["#f4614f", "#1a0f24", "#4f7dfb"],
+  ["#9b6bff", "#0a1120", "#35e0ee"],
+  ["#22d3a8", "#0a1120", "#e14bd6"],
+];
+
+function hashString(str: string) {
+  let h = 0;
+  for (let i = 0; i < str.length; i++) {
+    h = (h << 5) - h + str.charCodeAt(i);
+    h |= 0;
+  }
+  return Math.abs(h);
+}
+
+export function CoverArt({
+  title,
+  genre,
+  className,
+  imageUrl,
+}: {
+  title: string;
+  genre?: string[];
+  className?: string;
+  imageUrl?: string | null;
+}) {
+  if (imageUrl) {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src={imageUrl} alt={title} className={cn("h-full w-full object-cover", className)} />;
+  }
+
+  const idx = hashString(title) % PALETTES.length;
+  const [a, b, c] = PALETTES[idx];
+  const angle = 100 + (hashString(title + "a") % 60);
+  const initials = title
+    .split(/\s+/)
+    .filter((w) => w.length > 0 && /[A-Za-z0-9]/.test(w[0]))
+    .slice(0, 2)
+    .map((w) => w[0].toUpperCase())
+    .join("");
+
+  return (
+    <div
+      className={cn("relative h-full w-full overflow-hidden", className)}
+      style={{
+        background: `linear-gradient(${angle}deg, ${a}55 0%, ${b} 45%, ${c}55 100%)`,
+      }}
+    >
+      <div
+        className="absolute inset-0 opacity-40 mix-blend-overlay"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(135deg, rgba(255,255,255,0.08) 0 2px, transparent 2px 26px)",
+        }}
+      />
+      <div
+        className="absolute -right-6 -top-6 h-32 w-32 rounded-full blur-2xl opacity-50"
+        style={{ background: c }}
+      />
+      <div
+        className="absolute -bottom-8 -left-8 h-36 w-36 rounded-full blur-2xl opacity-40"
+        style={{ background: a }}
+      />
+      <div className="absolute inset-0 flex items-center justify-center">
+        <span
+          className="font-display font-bold text-white/20 select-none"
+          style={{ fontSize: "clamp(2.5rem, 18%, 5rem)" }}
+        >
+          {initials || "GL"}
+        </span>
+      </div>
+      {genre?.[0] && (
+        <span className="absolute left-3 top-3 rounded-full bg-black/30 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-white/70 backdrop-blur-sm">
+          {genre[0]}
+        </span>
+      )}
+    </div>
+  );
+}

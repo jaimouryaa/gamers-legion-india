@@ -1,0 +1,14 @@
+import { Navbar } from "@/components/site/navbar";
+import { Footer } from "@/components/site/footer";
+import { CartDrawer } from "@/components/site/cart-drawer";
+
+export default function PublicLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <Navbar />
+      <main className="flex-1">{children}</main>
+      <Footer />
+      <CartDrawer />
+    </>
+  );
+}
