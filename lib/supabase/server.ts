@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 import { createServerClient } from "@supabase/ssr";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
+=======
+import { createServerClient, createClient as createSupabaseClient } from "@supabase/ssr";
+>>>>>>> f123764 (second push)
 import { cookies } from "next/headers";
 import { supabaseCookieOptions } from "@/lib/supabase/cookie-options";
 
@@ -45,7 +49,11 @@ function createAdminClient() {
   return createSupabaseClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
+<<<<<<< HEAD
     { auth: { persistSession: false, autoRefreshToken: false } }
+=======
+    { cookies: { getAll: () => [], setAll: () => {} } }
+>>>>>>> f123764 (second push)
   );
 }
 
