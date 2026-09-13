@@ -1,0 +1,182 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+/* ---------------------------------------------------------------------- */
+/* GAMERS LEGION INDIA — burgundy / black gaming theme, dark by default,  */
+/* with a full light-mode override. Theme is toggled by setting           */
+/* data-theme="dark" | "light" on <html> (see lib/theme-store.ts).        */
+/* ---------------------------------------------------------------------- */
+
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --void: #0b0508;
+  --surface: #170a10;
+  --surface-elevated: #221019;
+  --surface-glass: rgba(34, 16, 25, 0.62);
+  --border-glass: rgba(196, 120, 140, 0.16);
+  --border-glass-strong: rgba(196, 120, 140, 0.32);
+
+  --text-primary: #f7eef0;
+  --text-secondary: #c7a3ac;
+  --text-muted: #8a636b;
+
+  /* Burgundy / wine accent family */
+  --accent-cyan: #d4335f;    /* primary — bright crimson-burgundy */
+  --accent-blue: #7a1130;    /* deep burgundy — gradient partner */
+  --accent-violet: #b8123f;  /* wine highlight */
+  --accent-magenta: #ff4d70; /* rose — badges */
+
+  --success: #34d399;
+  --warning: #e8b84b;
+  --danger: #ff6b52;
+
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  --void: #faf5f6;
+  --surface: #ffffff;
+  --surface-elevated: #fbeef0;
+  --surface-glass: rgba(255, 255, 255, 0.72);
+  --border-glass: rgba(120, 30, 50, 0.12);
+  --border-glass-strong: rgba(120, 30, 50, 0.24);
+
+  --text-primary: #1c0a0f;
+  --text-secondary: #5c333d;
+  --text-muted: #8a636b;
+
+  --accent-cyan: #a8123f;
+  --accent-blue: #6b0e28;
+  --accent-violet: #8f0f34;
+  --accent-magenta: #c81452;
+
+  --success: #0f9d68;
+  --warning: #b3791a;
+  --danger: #d1381f;
+}
+
+@theme inline {
+  --color-void: var(--void);
+  --color-surface: var(--surface);
+  --color-surface-elevated: var(--surface-elevated);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-accent-cyan: var(--accent-cyan);
+  --color-accent-blue: var(--accent-blue);
+  --color-accent-violet: var(--accent-violet);
+  --color-accent-magenta: var(--accent-magenta);
+  /* Aliases — some components/edits use these semantic names instead of
+     the hue-based ones above. Both resolve to the same real colors so
+     neither naming convention ever silently renders unstyled. */
+  --color-accent-primary: var(--accent-cyan);
+  --color-accent-secondary: var(--accent-blue);
+  --color-accent-tertiary: var(--accent-violet);
+  --color-accent-quaternary: var(--accent-magenta);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+  --color-border-glass: var(--border-glass);
+  --color-border-glass-strong: var(--border-glass-strong);
+  --font-display: var(--font-chakra);
+  --font-body: var(--font-inter);
+}
+
+* {
+  border-color: var(--border-glass);
+}
+
+body {
+  background: var(--void);
+  color: var(--text-primary);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+::selection {
+  background: var(--accent-cyan);
+  color: #fdf1f3;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--void);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border-glass-strong);
+  border-radius: 999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-blue);
+}
+
+.glass-panel {
+  background: var(--surface-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--border-glass);
+}
+
+.text-gradient {
+  background: linear-gradient(115deg, var(--text-primary) 10%, var(--accent-cyan) 55%, var(--accent-violet) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.grid-atmosphere {
+  background-image:
+    radial-gradient(60% 50% at 15% 10%, color-mix(in srgb, var(--accent-cyan) 16%, transparent), transparent 60%),
+    radial-gradient(50% 45% at 85% 20%, color-mix(in srgb, var(--accent-violet) 16%, transparent), transparent 60%),
+    radial-gradient(80% 60% at 50% 100%, color-mix(in srgb, var(--accent-blue) 12%, transparent), transparent 60%);
+}
+
+.input {
+  height: 2.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-glass-strong);
+  background: var(--surface);
+  padding: 0 0.875rem;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  width: 100%;
+}
+.input:focus {
+  outline: none;
+  border-color: color-mix(in srgb, var(--accent-cyan) 60%, transparent);
+}
+.input::placeholder {
+  color: var(--text-muted);
+}
+textarea.input {
+  height: auto;
+  padding-top: 0.625rem;
+  padding-bottom: 0.625rem;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
