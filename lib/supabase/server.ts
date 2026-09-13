@@ -1,9 +1,5 @@
-<<<<<<< HEAD
 import { createServerClient } from "@supabase/ssr";
 import { createClient as createSupabaseClient } from "@supabase/supabase-js";
-=======
-import { createServerClient, createClient as createSupabaseClient } from "@supabase/ssr";
->>>>>>> f123764 (second push)
 import { cookies } from "next/headers";
 import { supabaseCookieOptions } from "@/lib/supabase/cookie-options";
 
@@ -24,7 +20,6 @@ export async function createClient() {
           return cookieStore.getAll();
         },
         setAll(cookiesToSet) {
-          console.log("🔍 DEBUG server setAll — cookie names:", cookiesToSet.map(c => c.name));
           try {
             cookiesToSet.forEach(({ name, value, options }) =>
               cookieStore.set(name, value, options)
@@ -49,11 +44,7 @@ function createAdminClient() {
   return createSupabaseClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.SUPABASE_SERVICE_ROLE_KEY!,
-<<<<<<< HEAD
     { auth: { persistSession: false, autoRefreshToken: false } }
-=======
-    { cookies: { getAll: () => [], setAll: () => {} } }
->>>>>>> f123764 (second push)
   );
 }
 
@@ -79,8 +70,6 @@ export async function getCurrentProfile() {
     .select("id, email, role, full_name")
     .eq("id", user.id)
     .single();
-
-  console.log("🔍 DEBUG getCurrentProfile — user.id:", user.id, "profile:", profile, "error:", profileError?.message, profileError?.code);
 
   return profile ?? null;
 }

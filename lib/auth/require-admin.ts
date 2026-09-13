@@ -10,7 +10,6 @@ import { getCurrentProfile } from "@/lib/supabase/server";
  */
 export async function requireAdmin() {
   const profile = await getCurrentProfile();
-  console.log("🔍 DEBUG requireAdmin — profile:", profile);
 
   if (!profile) {
     redirect("/admin/login");

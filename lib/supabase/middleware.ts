@@ -4,7 +4,6 @@ import { supabaseCookieOptions } from "@/lib/supabase/cookie-options";
 
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
-  console.log("🔍 DEBUG middleware — incoming cookies:", request.cookies.getAll().map(c => c.name));
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
