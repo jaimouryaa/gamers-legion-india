@@ -21,8 +21,7 @@ export async function signInAction(_prev: AuthState, formData: FormData): Promis
   }
 
   const supabase = await createClient();
-  const { error, data } = await supabase.auth.signInWithPassword({ email, password });
-  console.log("🔍 DEBUG signIn — user:", data.user?.id, "error:", error?.message);
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
     return { error: "Invalid email or password." };

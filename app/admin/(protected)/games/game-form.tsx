@@ -1,10 +1,11 @@
 "use client";
 
-import { useActionState, useMemo, useState } from "react";
+import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { MediaUploadField } from "@/components/admin/media-upload-field";
 import { GENRES, PLATFORMS, type Game } from "@/lib/types";
 import { calcDiscount, formatINR } from "@/lib/utils";
 import type { FormState } from "@/app/admin/(protected)/games/actions";
@@ -26,34 +27,33 @@ export function GameForm({
     [originalPrice, salePrice]
   );
 
-  // Show a toast once the server action resolves successfully (state resets
-  // to null on redirect-free success) — for edit specifically we detect
-  // "no error" after a submit via the pending transition.
-  const err = state?.error;
   const fieldErrors = state?.fieldErrors ?? {};
 
-  async function handleSubmit(formData: FormData) {
-    const result = await formAction(formData);
-    // useActionState already updates `state`; this wrapper lets us toast.
-    return result;
-  }
+  // `state` from useActionState only reflects a completed submission once
+  // React has committed the update — reading it inside the form's own
+  // `action` callback (right after calling the dispatcher) gives you the
+  // PREVIOUS render's stale value, not the new result. The reliable way to
+  // react to "a submission just finished" is watching `pending` flip from
+  // true -> false in an effect, then reading the freshly-committed `state`.
+  const wasPending = useRef(false);
+  useEffect(() => {
+    if (wasPending.current && !pending) {
+      if (!state?.error) {
+        toast.success(game ? "Game updated successfully." : "Game created successfully.");
+        router.push("/admin/games");
+        router.refresh();
+      }
+      // On error, state.error is already rendered below — nothing else to do.
+    }
+    wasPending.current = pending;
+  }, [pending, state, game, router]);
 
   return (
-    <form
-      action={async (formData) => {
-        await handleSubmit(formData);
-        if (!state?.error) {
-          toast.success(game ? "Game updated successfully." : "Game created successfully.");
-          router.push("/admin/games");
-          router.refresh();
-        }
-      }}
-      className="flex flex-col gap-8"
-    >
-      {err && (
+    <form action={formAction} className="flex flex-col gap-8">
+      {state?.error && (
         <div className="flex items-center gap-2 rounded-xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">
           <AlertCircle size={16} />
-          {err}
+          {state.error}
         </div>
       )}
 
@@ -68,12 +68,19 @@ export function GameForm({
           <textarea name="description" defaultValue={game?.description} required rows={4} className="input resize-none" />
         </Field>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="Cover image URL" error={fieldErrors.coverImage} hint="Optional — placeholder art used if empty">
-            <input name="coverImage" type="url" defaultValue={game?.coverImage ?? ""} className="input" />
-          </Field>
-          <Field label="Banner image URL" error={fieldErrors.bannerImage}>
-            <input name="bannerImage" type="url" defaultValue={game?.bannerImage ?? ""} className="input" />
-          </Field>
+          <MediaUploadField
+            name="coverImage"
+            label="Cover image"
+            hint="Optional — placeholder art used if empty"
+            kind="covers"
+            defaultValue={game?.coverImage}
+          />
+          <MediaUploadField
+            name="bannerImage"
+            label="Banner image"
+            kind="banners"
+            defaultValue={game?.bannerImage}
+          />
         </div>
       </Section>
 
@@ -118,7 +125,7 @@ export function GameForm({
         </div>
         <div className="flex items-center gap-6 rounded-xl border border-border-glass bg-surface/60 px-4 py-3 text-sm">
           <span className="text-text-muted">
-            Discount: <span className="font-semibold text-accent-primary">{discountPercentage}% OFF</span>
+            Discount: <span className="font-semibold text-accent-cyan">{discountPercentage}% OFF</span>
           </span>
           <span className="text-text-muted">
             Savings: <span className="font-semibold text-success">{formatINR(savings)}</span>
@@ -147,16 +154,16 @@ export function GameForm({
           </Field>
         </div>
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="Status">
-            <select name="status" defaultValue={game?.status ?? "draft"} className="input">
-              <option value="draft">Draft</option>
+          <Field label="Status" hint={!game ? "New games are Active by default — visible on the storefront immediately." : undefined}>
+            <select name="status" defaultValue={game?.status ?? "active"} className="input">
               <option value="active">Active</option>
+              <option value="draft">Draft (hidden from storefront)</option>
               <option value="archived">Archived</option>
               <option value="expired">Expired</option>
             </select>
           </Field>
           <label className="flex items-center gap-2.5 self-end pb-2.5 text-sm text-text-secondary">
-            <input type="checkbox" name="featured" defaultChecked={game?.featured} className="h-4 w-4 accent-accent-primary" />
+            <input type="checkbox" name="featured" defaultChecked={game?.featured} className="h-4 w-4 accent-accent-cyan" />
             Featured on homepage
           </label>
         </div>
@@ -221,7 +228,7 @@ function CheckboxGroup({
       {options.map((opt) => (
         <label
           key={opt}
-          className="flex items-center gap-2 rounded-full border border-border-glass px-3 py-1.5 text-xs text-text-secondary has-checked:border-accent-primary/60 has-checked:text-accent-primary has-checked:bg-accent-primary/10"
+          className="flex items-center gap-2 rounded-full border border-border-glass px-3 py-1.5 text-xs text-text-secondary has-checked:border-accent-cyan/60 has-checked:text-accent-cyan has-checked:bg-accent-cyan/10"
         >
           <input
             type="checkbox"

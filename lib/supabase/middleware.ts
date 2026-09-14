@@ -4,7 +4,6 @@ import { supabaseCookieOptions } from "@/lib/supabase/cookie-options";
 
 export async function updateSession(request: NextRequest) {
   let response = NextResponse.next({ request });
-  console.log("🔍 DEBUG middleware — incoming cookies:", request.cookies.getAll().map(c => c.name));
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -28,6 +27,8 @@ export async function updateSession(request: NextRequest) {
     }
   );
 
+  // IMPORTANT: getUser() (not getSession()) re-validates the token against
+  // Supabase Auth on every request instead of trusting a local cookie.
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -35,6 +36,13 @@ export async function updateSession(request: NextRequest) {
   const path = request.nextUrl.pathname;
   const isAdminRoute = path.startsWith("/admin") && path !== "/admin/login";
 
+  // Only ever redirect in ONE direction here: unauthenticated users away
+  // from protected routes. We deliberately do NOT also redirect logged-in
+  // users away from /admin/login — each of those checks is a separate,
+  // independent network call to Supabase, and if they ever briefly
+  // disagree (a network blip, a rate limit, anything), redirecting in both
+  // directions creates an infinite /admin <-> /admin/login loop. Landing
+  // an already-logged-in admin on the login page is harmless; this isn't.
   if (isAdminRoute && !user) {
     const url = request.nextUrl.clone();
     url.pathname = "/admin/login";

@@ -34,15 +34,33 @@ create trigger on_auth_user_created
 
 alter table profiles enable row level security;
 
+-- Checks whether the current user is an admin, without re-triggering RLS
+-- on `profiles` in the process. SECURITY DEFINER makes this function run
+-- with the privileges of its owner rather than the calling user, which is
+-- what lets it read `profiles` internally without going back through RLS
+-- policies on that same table. This is required — an admin-check policy
+-- on `profiles` that queries `profiles` directly in its own USING clause
+-- causes Postgres to re-evaluate that same policy recursively, forever,
+-- surfacing as error 42P17 "infinite recursion detected in policy".
+create or replace function public.is_admin()
+returns boolean
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select exists (
+    select 1 from profiles where id = auth.uid() and role = 'admin'
+  );
+$$;
+
 create policy "Users can view their own profile"
   on profiles for select
   using (auth.uid() = id);
 
 create policy "Admins can view all profiles"
   on profiles for select
-  using (
-    exists (select 1 from profiles p where p.id = auth.uid() and p.role = 'admin')
-  );
+  using (public.is_admin());
 
 -- ---------------------------------------------------------------------------
 -- 2. GAMES
@@ -111,25 +129,25 @@ create policy "Public can read active games"
 create policy "Admins can read all games"
   on games for select
   using (
-    exists (select 1 from profiles p where p.id = auth.uid() and p.role = 'admin')
+    public.is_admin()
   );
 
 create policy "Admins can insert games"
   on games for insert
   with check (
-    exists (select 1 from profiles p where p.id = auth.uid() and p.role = 'admin')
+    public.is_admin()
   );
 
 create policy "Admins can update games"
   on games for update
   using (
-    exists (select 1 from profiles p where p.id = auth.uid() and p.role = 'admin')
+    public.is_admin()
   );
 
 create policy "Admins can delete games"
   on games for delete
   using (
-    exists (select 1 from profiles p where p.id = auth.uid() and p.role = 'admin')
+    public.is_admin()
   );
 
 -- ---------------------------------------------------------------------------
@@ -147,21 +165,21 @@ create policy "Admins can upload game images"
   on storage.objects for insert
   with check (
     bucket_id = 'games'
-    and exists (select 1 from profiles p where p.id = auth.uid() and p.role = 'admin')
+    and public.is_admin()
   );
 
 create policy "Admins can update game images"
   on storage.objects for update
   using (
     bucket_id = 'games'
-    and exists (select 1 from profiles p where p.id = auth.uid() and p.role = 'admin')
+    and public.is_admin()
   );
 
 create policy "Admins can delete game images"
   on storage.objects for delete
   using (
     bucket_id = 'games'
-    and exists (select 1 from profiles p where p.id = auth.uid() and p.role = 'admin')
+    and public.is_admin()
   );
 
 -- ============================================================================

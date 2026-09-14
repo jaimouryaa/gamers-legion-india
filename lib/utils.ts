@@ -20,6 +20,17 @@ export function calcDiscount(originalPrice: number, salePrice: number) {
   return { savings, discountPercentage };
 }
 
+// Media (cover/banner) URLs can point at an image, a GIF, or now a short
+// video clip — there's no separate "media type" column in the database, so
+// we infer it from the file extension both here and wherever it's uploaded.
+const VIDEO_EXTENSIONS = [".mp4", ".webm", ".mov"];
+
+export function isVideoUrl(url: string | null | undefined): boolean {
+  if (!url) return false;
+  const clean = url.split("?")[0].toLowerCase();
+  return VIDEO_EXTENSIONS.some((ext) => clean.endsWith(ext));
+}
+
 export function slugify(title: string): string {
   return title
     .toLowerCase()

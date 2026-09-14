@@ -1,4 +1,7 @@
-import { cn } from "@/lib/utils";
+"use client";
+
+import { useState } from "react";
+import { cn, isVideoUrl } from "@/lib/utils";
 
 // Deterministic gradient placeholder art for a game cover. We never fetch or
 // reproduce real publisher box art (copyrighted) — this generates distinct,
@@ -21,22 +24,15 @@ function hashString(str: string) {
   return Math.abs(h);
 }
 
-export function CoverArt({
+function PlaceholderArt({
   title,
   genre,
   className,
-  imageUrl,
 }: {
   title: string;
   genre?: string[];
   className?: string;
-  imageUrl?: string | null;
 }) {
-  if (imageUrl) {
-    // eslint-disable-next-line @next/next/no-img-element
-    return <img src={imageUrl} alt={title} className={cn("h-full w-full object-cover", className)} />;
-  }
-
   const idx = hashString(title) % PALETTES.length;
   const [a, b, c] = PALETTES[idx];
   const angle = 100 + (hashString(title + "a") % 60);
@@ -84,4 +80,53 @@ export function CoverArt({
       )}
     </div>
   );
+}
+
+export function CoverArt({
+  title,
+  genre,
+  className,
+  imageUrl,
+}: {
+  title: string;
+  genre?: string[];
+  className?: string;
+  imageUrl?: string | null;
+}) {
+  // If a real image/video URL is set but fails to actually load (broken
+  // link, wrong format — e.g. a Google Drive "share" link instead of a
+  // direct file URL, a 404, a CORS/hotlink block), fall back to the
+  // generated placeholder instead of showing a broken image icon.
+  const [failed, setFailed] = useState(false);
+
+  if (imageUrl && !failed) {
+    if (isVideoUrl(imageUrl)) {
+      return (
+        <video
+          src={imageUrl}
+          autoPlay
+          loop
+          muted
+          playsInline
+          onError={() => setFailed(true)}
+          className={cn("h-full w-full object-cover", className)}
+        />
+      );
+    }
+    return (
+      // Intentionally not next/image: cover URLs are arbitrary external
+      // links (including ones that may 404 or block hotlinking), and this
+      // component already handles that via onError falling back to
+      // generated placeholder art.
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={imageUrl}
+        alt={title}
+        onError={() => setFailed(true)}
+        className={cn("h-full w-full object-cover", className)}
+      />
+    );
+  }
+
+  return <PlaceholderArt title={title} genre={genre} className={className} />;
 }

@@ -103,7 +103,7 @@ export async function updateGameAction(
   const supabase = await createClient();
   const data = parsed.data;
 
-  const { error } = await supabase
+  const { data: updated, error } = await supabase
     .from("games")
     .update({
       title: data.title,
@@ -123,7 +123,9 @@ export async function updateGameAction(
       status: data.status,
       tags: data.tags ?? [],
     })
-    .eq("id", id);
+    .eq("id", id)
+    .select("slug")
+    .single();
 
   if (error) {
     return { error: "Couldn't save changes. Try again." };
@@ -132,7 +134,11 @@ export async function updateGameAction(
   revalidatePath("/admin/games");
   revalidatePath("/");
   revalidatePath("/games");
-  revalidatePath(`/games/${raw.title ? slugify(raw.title) : ""}`);
+  // Slugs are intentionally immutable after creation (so a title edit never
+  // breaks an existing /games/[slug] URL) — revalidate using the record's
+  // real, stored slug rather than re-deriving one from the (possibly
+  // changed) title, which would point at the wrong, non-existent path.
+  revalidatePath(`/games/${updated.slug}`);
   return null;
 }
 
