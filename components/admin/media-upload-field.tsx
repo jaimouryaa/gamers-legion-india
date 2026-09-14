@@ -1,13 +1,19 @@
 "use client";
 
-import { useRef, useState, useTransition } from "react";
+import { useRef, useState } from "react";
 import { ImagePlus, Loader2, X, AlertCircle, Film } from "lucide-react";
 import { toast } from "sonner";
 import { cn, isVideoUrl } from "@/lib/utils";
-import { uploadGameImage } from "@/app/admin/(protected)/games/upload-action";
+import { createClient } from "@/lib/supabase/client";
 
 const ACCEPT =
   "image/jpeg,image/png,image/webp,image/avif,image/gif,video/mp4,video/webm,video/quicktime";
+
+const MAX_IMAGE_BYTES = 20 * 1024 * 1024; // 20MB
+const MAX_VIDEO_BYTES = 40 * 1024 * 1024; // 40MB — short preview clips only
+const ALLOWED_IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp", "image/gif", "image/avif"];
+const ALLOWED_VIDEO_TYPES = ["video/mp4", "video/webm", "video/quicktime"];
+const ALLOWED_TYPES = [...ALLOWED_IMAGE_TYPES, ...ALLOWED_VIDEO_TYPES];
 
 export function MediaUploadField({
   name,
@@ -23,33 +29,64 @@ export function MediaUploadField({
   defaultValue?: string | null;
 }) {
   const [url, setUrl] = useState(defaultValue ?? "");
-  // Tracks whether the CURRENT `url` is a video, for preview purposes.
-  // Seeded from the URL's extension for an existing value (edit mode);
-  // updated from the actual File's type right after a fresh upload, since
-  // that's more reliable than waiting to re-derive it from the URL.
   const [isVideo, setIsVideo] = useState(() => isVideoUrl(defaultValue));
   const [error, setError] = useState<string | null>(null);
-  const [pending, startTransition] = useTransition();
+  const [pending, setPending] = useState(false);
   const [dragOver, setDragOver] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  function handleFile(file: File | undefined) {
+  async function handleFile(file: File | undefined) {
     if (!file) return;
     setError(null);
+
+    if (!ALLOWED_TYPES.includes(file.type)) {
+      const msg = "Please upload a JPG, PNG, WebP, AVIF, GIF image or an MP4/WebM video.";
+      setError(msg);
+      toast.error(msg);
+      return;
+    }
     const fileIsVideo = file.type.startsWith("video/");
-    startTransition(async () => {
-      const formData = new FormData();
-      formData.set("file", file);
-      formData.set("kind", kind);
-      const result = await uploadGameImage(formData);
-      if (result.error) {
-        setError(result.error);
-        toast.error(result.error);
+    const maxBytes = fileIsVideo ? MAX_VIDEO_BYTES : MAX_IMAGE_BYTES;
+    if (file.size > maxBytes) {
+      const msg = fileIsVideo
+        ? "Video is too large — please keep it under 40MB (a short clip works best)."
+        : "Image is too large — please keep it under 20MB.";
+      setError(msg);
+      toast.error(msg);
+      return;
+    }
+
+    setPending(true);
+    try {
+      // Uploaded directly from the browser to Supabase Storage — not
+      // through a Server Action. Vercel's serverless functions cap request
+      // bodies at 4.5MB regardless of any Next.js config, which silently
+      // breaks larger file uploads in production even though it works
+      // locally. Going straight to Supabase from the browser sidesteps
+      // that limit entirely; the RLS policies on the `games` bucket (see
+      // supabase/schema.sql) are what actually authorize this as an
+      // admin-only write, the same as every other admin action.
+      const supabase = createClient();
+      const extension = file.name.split(".").pop()?.toLowerCase() || "jpg";
+      const path = `${kind}/${crypto.randomUUID()}.${extension}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from("games")
+        .upload(path, file, { contentType: file.type, upsert: false });
+
+      if (uploadError) {
+        const msg = "Upload failed. Please try again.";
+        setError(msg);
+        toast.error(msg);
         return;
       }
-      setUrl(result.url ?? "");
+
+      const { data } = supabase.storage.from("games").getPublicUrl(path);
+      setUrl(data.publicUrl);
       setIsVideo(fileIsVideo);
-    });
+    } finally {
+      setPending(false);
+    }
   }
 
   return (
