@@ -13,6 +13,7 @@ export const NAV_LINKS = [
   { label: "Home", href: "/" },
   { label: "Games", href: "/games" },
   { label: "Deals", href: "/deals" },
+  { label: "Bundles", href: "/bundles" },
   { label: "About", href: "/about" },
 ];
 
@@ -61,6 +62,7 @@ export const FOOTER = {
     { label: "Home", href: "/" },
     { label: "Games", href: "/games" },
     { label: "Deals", href: "/deals" },
+    { label: "Bundles", href: "/bundles" },
     { label: "About", href: "/about" },
   ],
   support: [

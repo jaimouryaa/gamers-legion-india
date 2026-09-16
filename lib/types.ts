@@ -49,6 +49,38 @@ export interface HeroStat {
   value: string;
 }
 
+export interface Bundle {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  bannerImage: string | null;
+  gameIds: string[];
+  originalPrice: number;
+  bundlePrice: number;
+  discountPercentage: number;
+  savings: number;
+  rating: number | null;
+  featured: boolean;
+  status: GameStatus;
+  expiresAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BundleInput {
+  name: string;
+  description: string;
+  bannerImage?: string;
+  gameIds: string[];
+  originalPrice: number;
+  bundlePrice: number;
+  rating?: number;
+  featured: boolean;
+  status: GameStatus;
+  expiresAt?: string;
+}
+
 export const GENRES = [
   "Action",
   "RPG",

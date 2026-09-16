@@ -67,6 +67,22 @@ export function buildWhatsAppLink(params: {
   return `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
 }
 
+export function buildWhatsAppBundleLink(bundle: { name: string; price: number; slug?: string }) {
+  const number = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+  const link = bundle.slug ? `${origin}/bundles/${bundle.slug}` : "";
+  const message = [
+    `Hi Gamers Legion India, I'd like to buy the bundle:`,
+    `${bundle.name} — ${formatINR(bundle.price)}`,
+    link,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  if (!number) return "#";
+  return `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
+}
+
 export function buildWhatsAppGeneralLink() {
   const number = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER;
   if (!number) return "#";

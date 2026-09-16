@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Gamepad2, Tag, Star, Clock3, Plus, Megaphone, Users } from "lucide-react";
+import { Gamepad2, Tag, Star, Plus, Package, Users } from "lucide-react";
 import { getAdminKpis, getAllGamesForAdmin } from "@/lib/queries/games";
+import { getAllBundlesForAdmin } from "@/lib/queries/bundles";
 import { KpiCard } from "@/components/admin/kpi-card";
 import { StatusPill } from "@/components/ui/badge";
 import { CoverArt } from "@/components/ui/cover-art";
@@ -10,7 +11,11 @@ import { formatINR } from "@/lib/utils";
 export const metadata: Metadata = { title: "Admin Dashboard", robots: { index: false } };
 
 export default async function AdminDashboardPage() {
-  const [kpis, games] = await Promise.all([getAdminKpis(), getAllGamesForAdmin()]);
+  const [kpis, games, bundles] = await Promise.all([
+    getAdminKpis(),
+    getAllGamesForAdmin(),
+    getAllBundlesForAdmin(),
+  ]);
   const recent = games.slice(0, 6);
 
   return (
@@ -21,8 +26,8 @@ export default async function AdminDashboardPage() {
       <div className="mt-6 grid grid-cols-2 gap-4 lg:grid-cols-4">
         <KpiCard icon={<Gamepad2 size={17} />} value={kpis.totalGames} label="Total games" />
         <KpiCard icon={<Tag size={17} />} value={kpis.activeDeals} label="Active deals" />
+        <KpiCard icon={<Package size={17} />} value={bundles.length} label="Bundles" />
         <KpiCard icon={<Star size={17} />} value={kpis.featured} label="Featured" />
-        <KpiCard icon={<Clock3 size={17} />} value={kpis.expiringToday} label="Expiring today" />
       </div>
 
       <div className="mt-8">
@@ -32,7 +37,7 @@ export default async function AdminDashboardPage() {
         <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           <QuickAction href="/admin/games/new" icon={Plus} label="Add game" />
           <QuickAction href="/admin/games" icon={Gamepad2} label="Manage games" />
-          <QuickAction href="/admin/games?status=active" icon={Megaphone} label="Promotions" disabled />
+          <QuickAction href="/admin/bundles/new" icon={Package} label="Create bundle" />
           <QuickAction href="/admin/games" icon={Users} label="Manage users" disabled />
         </div>
       </div>
