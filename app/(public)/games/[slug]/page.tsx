@@ -5,7 +5,7 @@ import { CoverArt } from "@/components/ui/cover-art";
 import { DiscountBadge } from "@/components/ui/badge";
 import { Rating } from "@/components/ui/rating";
 import { Price } from "@/components/ui/price";
-import { formatINR } from "@/lib/utils";
+import { formatINR, ogImageFor } from "@/lib/utils";
 import { GameGrid } from "@/components/site/game-grid";
 import { GameDetailActions } from "@/components/site/game-detail-actions";
 
@@ -17,10 +17,22 @@ export async function generateMetadata({
   const { slug } = await params;
   const game = await getGameBySlug(slug);
   if (!game) return { title: "Game not found" };
+  const description = game.shortDescription ?? game.description.slice(0, 155);
+  const image = ogImageFor(game.bannerImage, game.coverImage);
   return {
     title: game.title,
-    description: game.shortDescription ?? game.description.slice(0, 155),
-    openGraph: { title: game.title, description: game.shortDescription ?? undefined },
+    description,
+    openGraph: {
+      title: game.title,
+      description,
+      images: image ? [{ url: image }] : undefined,
+    },
+    twitter: {
+      card: image ? "summary_large_image" : "summary",
+      title: game.title,
+      description,
+      images: image ? [image] : undefined,
+    },
   };
 }
 

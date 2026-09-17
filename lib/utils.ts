@@ -31,6 +31,15 @@ export function isVideoUrl(url: string | null | undefined): boolean {
   return VIDEO_EXTENSIONS.some((ext) => clean.endsWith(ext));
 }
 
+// WhatsApp/social link previews need a real <og:image> to show a picture —
+// video covers don't work as an OG image (that needs separate og:video
+// tags, which most chat apps render inconsistently), so prefer whichever
+// of cover/banner is an actual image and skip entirely if only video art
+// is set, rather than showing a broken/blank preview.
+export function ogImageFor(...urls: (string | null | undefined)[]): string | undefined {
+  return urls.find((u): u is string => !!u && !isVideoUrl(u));
+}
+
 export function slugify(title: string): string {
   return title
     .toLowerCase()
