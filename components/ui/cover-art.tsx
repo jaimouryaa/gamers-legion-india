@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { cn, isVideoUrl } from "@/lib/utils";
 
 // Deterministic gradient placeholder art for a game cover. We never fetch or
@@ -82,6 +82,52 @@ function PlaceholderArt({
   );
 }
 
+// Autoplaying video covers, hardened against a well-known browser gotcha:
+// setting `muted` as a JSX/HTML attribute doesn't always reliably apply
+// before the browser evaluates an autoplay request, so autoplay can get
+// silently blocked (no error — the video just never starts, which looks
+// exactly like "the video isn't showing"). Setting `.muted` on the actual
+// DOM node imperatively, before calling `.play()`, is the robust fix.
+function VideoCover({
+  src,
+  className,
+  onFailed,
+}: {
+  src: string;
+  className?: string;
+  onFailed: () => void;
+}) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = true;
+    video.defaultMuted = true;
+    const playPromise = video.play();
+    if (playPromise !== undefined) {
+      playPromise.catch(() => {
+        // Some browsers/contexts (e.g. strict data-saver mode) block
+        // autoplay regardless — that's a browser policy, not a bug here.
+        // The video's first frame still renders as a static fallback.
+      });
+    }
+  }, [src]);
+
+  return (
+    <video
+      ref={videoRef}
+      src={src}
+      loop
+      muted
+      playsInline
+      preload="auto"
+      onError={onFailed}
+      className={cn("h-full w-full object-cover", className)}
+    />
+  );
+}
+
 export function CoverArt({
   title,
   genre,
@@ -101,17 +147,7 @@ export function CoverArt({
 
   if (imageUrl && !failed) {
     if (isVideoUrl(imageUrl)) {
-      return (
-        <video
-          src={imageUrl}
-          autoPlay
-          loop
-          muted
-          playsInline
-          onError={() => setFailed(true)}
-          className={cn("h-full w-full object-cover", className)}
-        />
-      );
+      return <VideoCover src={imageUrl} className={className} onFailed={() => setFailed(true)} />;
     }
     return (
       // Intentionally not next/image: cover URLs are arbitrary external
