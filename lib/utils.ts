@@ -107,12 +107,18 @@ export function buildWhatsAppCartLink(
 
   const lines = items.map((i) => `• ${i.title} — ${formatINR(i.price)}`);
   const total = items.reduce((sum, i) => sum + i.price, 0);
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
   const message = [
     `Hi Gamers Legion India, I'd like to buy:`,
     ...lines,
     ``,
     `Total: ${formatINR(total)}`,
-  ].join("\n");
+    origin, // gives WhatsApp a link to generate a preview card from —
+            // single-item and bundle checkout already include one; cart
+            // checkout (multiple items) didn't, so it never showed a card.
+  ]
+    .filter(Boolean)
+    .join("\n");
 
   return `https://wa.me/${number}?text=${encodeURIComponent(message)}`;
 }
