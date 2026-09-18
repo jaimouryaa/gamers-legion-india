@@ -30,6 +30,24 @@ export async function createClient() {
         },
       },
       cookieOptions: supabaseCookieOptions,
+      auth: {
+        // This client is created fresh per request in a stateless server
+        // environment (Server Components/Actions) — there's no long-lived
+        // process for a background token-refresh timer to run in, and one
+        // isn't needed: the proxy already does an explicit, one-time
+        // getUser() revalidation for admin routes. Without this, the
+        // client's default auto-refresh behavior fires on creation and,
+        // if a stale/invalid refresh token is sitting in cookies (e.g.
+        // from an account that no longer exists), logs a noisy
+        // "Invalid Refresh Token" AuthApiError on every request — even
+        // ones that never call getUser() themselves.
+        //
+        // persistSession is deliberately left at its default (true) —
+        // that's what makes this client read the existing session from
+        // our custom cookie storage adapter above, which admin auth
+        // depends on. Only the background auto-refresh timer is disabled.
+        autoRefreshToken: false,
+      },
     }
   );
 }

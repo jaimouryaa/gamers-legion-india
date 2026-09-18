@@ -38,6 +38,15 @@ export async function updateSession(request: NextRequest) {
         },
       },
       cookieOptions: supabaseCookieOptions,
+      // Same reasoning as lib/supabase/server.ts: this client is created
+      // fresh per request, so a background auto-refresh timer has nothing
+      // to run in and only risks a noisy logged error if the existing
+      // cookie holds a stale/invalid refresh token. The explicit
+      // getUser() call below already does the one revalidation that
+      // actually matters here.
+      auth: {
+        autoRefreshToken: false,
+      },
     }
   );
 
