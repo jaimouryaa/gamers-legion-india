@@ -18,17 +18,12 @@ export function AdminSidebar({ onNavigate }: { onNavigate?: () => void }) {
   return (
     <div className="flex h-full flex-col">
       <div className="flex items-center gap-2.5 px-5 py-5">
-        <Link href="/" className="flex items-center gap-2.5" onClick={onNavigate}>
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-accent-primary to-accent-violet font-display text-sm font-bold text-[#fdf1f3]">
-            GL
-          </span>
-          <span className="font-display leading-tight">
-            <span className="block text-[12px] font-semibold tracking-[0.12em] text-text-primary">
-              GAMERS LEGION
-            </span>
-            <span className="block text-[9px] font-medium tracking-[0.3em] text-accent-primary">
-              ADMIN
-            </span>
+        <Link href="/" className="flex items-center gap-2" onClick={onNavigate}>
+          {/* eslint-disable-next-line @next/next/no-img-element -- small
+              static brand asset from /public, not worth next/image here */}
+          <img src="/logo.png" alt="Gamers Legion India" className="h-8 w-auto" />
+          <span className="rounded-full border border-border-glass px-1.5 py-0.5 text-[9px] font-medium tracking-[0.2em] text-text-muted">
+            ADMIN
           </span>
         </Link>
       </div>

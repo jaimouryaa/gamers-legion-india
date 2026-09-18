@@ -16,17 +16,9 @@ export function Footer() {
         <div className="grid grid-cols-2 gap-10 sm:grid-cols-4 lg:grid-cols-5">
           <div className="col-span-2 lg:col-span-2">
             <Link href="/" className="flex items-center gap-2.5">
-              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-accent-primary to-accent-violet font-display text-sm font-bold text-[#fdf1f3]">
-                GL
-              </span>
-              <span className="font-display leading-tight">
-                <span className="block text-[13px] font-semibold tracking-[0.14em] text-text-primary">
-                  GAMERS LEGION
-                </span>
-                <span className="block text-[10px] font-medium tracking-[0.3em] text-accent-primary">
-                  INDIA
-                </span>
-              </span>
+              {/* eslint-disable-next-line @next/next/no-img-element -- small
+                  static brand asset from /public, not worth next/image here */}
+              <img src="/logo.png" alt="Gamers Legion India" className="h-9 w-auto" />
             </Link>
             <p className="mt-4 max-w-xs text-sm text-text-muted">{FOOTER.description}</p>
             <div className="mt-5 flex items-center gap-3">

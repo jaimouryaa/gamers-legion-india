@@ -16,9 +16,9 @@ export function LoginForm() {
   return (
     <div className="glass-panel w-full max-w-sm rounded-3xl p-8">
       <div className="mb-7 flex flex-col items-center text-center">
-        <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-accent-cyan to-accent-violet font-display text-base font-bold text-[#fdf1f3]">
-          GL
-        </span>
+        {/* eslint-disable-next-line @next/next/no-img-element -- small
+            static brand asset from /public, not worth next/image here */}
+        <img src="/logo.png" alt="Gamers Legion India" className="h-14 w-auto" />
         <h1 className="mt-4 font-display text-lg font-semibold text-text-primary">
           Admin sign in
         </h1>

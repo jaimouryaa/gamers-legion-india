@@ -57,17 +57,9 @@ export function Navbar() {
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2.5 shrink-0">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-accent-primary to-accent-violet font-display text-sm font-bold text-[#fdf1f3]">
-            GL
-          </span>
-          <span className="font-display leading-tight">
-            <span className="block text-[13px] font-semibold tracking-[0.14em] text-text-primary">
-              GAMERS LEGION
-            </span>
-            <span className="block text-[10px] font-medium tracking-[0.3em] text-accent-primary">
-              INDIA
-            </span>
-          </span>
+          {/* eslint-disable-next-line @next/next/no-img-element -- small
+              static brand asset from /public, not worth next/image here */}
+          <img src="/logo.png" alt="Gamers Legion India" className="h-9 w-auto" />
         </Link>
 
         <nav className="hidden items-center gap-1 md:flex">
