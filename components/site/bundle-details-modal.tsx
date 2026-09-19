@@ -68,11 +68,11 @@ export function BundleDetailsModal({
 
             <div className="relative h-48 shrink-0 sm:h-56">
               <CoverArt title={bundle.name} imageUrl={bundle.bannerImage} />
-              <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/40 to-transparent" />
             </div>
 
-            <div className="overflow-y-auto px-6 pb-6 sm:px-8 sm:pb-8">
-              <div className="-mt-8 flex flex-wrap items-start justify-between gap-4">
+            <div className="overflow-y-auto px-6 pb-6 pt-5 sm:px-8 sm:pb-8">
+              <div className="flex flex-wrap items-start justify-between gap-4">
                 <div>
                   <h2 className="font-display text-2xl font-bold text-text-primary sm:text-3xl">
                     {bundle.name}
