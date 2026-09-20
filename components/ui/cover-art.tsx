@@ -91,10 +91,12 @@ function PlaceholderArt({
 function VideoCover({
   src,
   className,
+  fit,
   onFailed,
 }: {
   src: string;
   className?: string;
+  fit: "cover" | "contain";
   onFailed: () => void;
 }) {
   const videoRef = useRef<HTMLVideoElement>(null);
@@ -113,6 +115,27 @@ function VideoCover({
       });
     }
   }, [src]);
+
+  if (fit === "contain") {
+    // No cropping: the video sits at its natural aspect ratio on a plain
+    // dark backdrop (not the blurred-copy trick used for images below —
+    // rendering the same video twice would double decode/bandwidth cost
+    // for comparatively little visual benefit on a moving image).
+    return (
+      <div className={cn("relative h-full w-full overflow-hidden bg-surface", className)}>
+        <video
+          ref={videoRef}
+          src={src}
+          loop
+          muted
+          playsInline
+          preload="auto"
+          onError={onFailed}
+          className="h-full w-full object-contain"
+        />
+      </div>
+    );
+  }
 
   return (
     <video
@@ -133,11 +156,23 @@ export function CoverArt({
   genre,
   className,
   imageUrl,
+  fit = "cover",
 }: {
   title: string;
   genre?: string[];
   className?: string;
   imageUrl?: string | null;
+  /**
+   * "cover" (default) fills the frame edge-to-edge, cropping whatever
+   * doesn't fit — right for full-bleed hero/banner contexts where that's
+   * intentional. "contain" shows the entire image with nothing cropped —
+   * right for compact grid tiles/cards, so logos or text baked into cover
+   * art (game titles, character art near the edges) never get cut off.
+   * For images, "contain" fills the surrounding space with a softly
+   * blurred, scaled-up copy of the same image instead of plain bars, so
+   * mismatched aspect ratios still look intentional rather than empty.
+   */
+  fit?: "cover" | "contain";
 }) {
   // If a real image/video URL is set but fails to actually load (broken
   // link, wrong format — e.g. a Google Drive "share" link instead of a
@@ -147,8 +182,35 @@ export function CoverArt({
 
   if (imageUrl && !failed) {
     if (isVideoUrl(imageUrl)) {
-      return <VideoCover src={imageUrl} className={className} onFailed={() => setFailed(true)} />;
+      return (
+        <VideoCover src={imageUrl} className={className} fit={fit} onFailed={() => setFailed(true)} />
+      );
     }
+
+    if (fit === "contain") {
+      return (
+        <div className={cn("relative h-full w-full overflow-hidden bg-surface", className)}>
+          {/* eslint-disable-next-line @next/next/no-img-element -- arbitrary external URL, see note below */}
+          <img
+            src={imageUrl}
+            alt=""
+            aria-hidden="true"
+            className="absolute inset-0 h-full w-full scale-110 object-cover opacity-50 blur-2xl"
+          />
+          {/* eslint-disable-next-line @next/next/no-img-element -- intentionally
+              not next/image: cover URLs are arbitrary external links (including
+              ones that may 404 or block hotlinking), and this component already
+              handles that via onError falling back to generated placeholder art. */}
+          <img
+            src={imageUrl}
+            alt={title}
+            onError={() => setFailed(true)}
+            className="relative h-full w-full object-contain"
+          />
+        </div>
+      );
+    }
+
     return (
       // Intentionally not next/image: cover URLs are arbitrary external
       // links (including ones that may 404 or block hotlinking), and this

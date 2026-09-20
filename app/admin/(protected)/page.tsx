@@ -62,7 +62,7 @@ export default async function AdminDashboardPage() {
                   className="flex items-center gap-3 border-b border-border-glass px-4 py-3 last:border-0"
                 >
                   <div className="h-10 w-10 shrink-0 overflow-hidden rounded-lg">
-                    <CoverArt title={g.title} genre={g.genre} imageUrl={g.coverImage} />
+                    <CoverArt title={g.title} genre={g.genre} imageUrl={g.coverImage} fit="contain" />
                   </div>
                   <div className="min-w-0 flex-1">
                     <p className="truncate text-sm font-medium text-text-primary">{g.title}</p>

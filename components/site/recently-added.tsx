@@ -23,7 +23,7 @@ export function RecentlyAdded({ games }: { games: Game[] }) {
             className="glass-panel flex w-40 shrink-0 flex-col overflow-hidden rounded-xl text-left transition-all duration-300 hover:-translate-y-1 hover:scale-[1.04] hover:border-accent-cyan/40 sm:w-auto"
           >
             <div className="relative aspect-square">
-              <CoverArt title={game.title} genre={game.genre} imageUrl={game.coverImage} />
+              <CoverArt title={game.title} genre={game.genre} imageUrl={game.coverImage} fit="contain" />
               {game.discountPercentage > 0 && (
                 <div className="absolute left-2 top-2">
                   <DiscountBadge percentage={game.discountPercentage} className="px-2 py-0.5 text-[10px]" />

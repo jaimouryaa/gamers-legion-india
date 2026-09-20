@@ -64,7 +64,7 @@ export function GameDetailsModal({
               <X size={18} />
             </button>
 
-            <div className="relative h-52 shrink-0 sm:h-64">
+            <div className="relative h-40 shrink-0 sm:h-64">
               <CoverArt title={game.title} genre={game.genre} imageUrl={game.bannerImage ?? game.coverImage} />
               <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/40 to-transparent" />
             </div>
@@ -94,7 +94,9 @@ export function GameDetailsModal({
                 </div>
               </div>
 
-              <p className="mt-5 text-sm leading-relaxed text-text-secondary">{game.description}</p>
+              <p className="mt-5 max-h-28 overflow-y-auto pr-1 text-sm leading-relaxed text-text-secondary sm:max-h-36">
+                {game.description}
+              </p>
 
               <div className="mt-6 flex flex-wrap items-end justify-between gap-4 rounded-2xl border border-border-glass bg-surface/60 p-5">
                 <div>

@@ -66,7 +66,7 @@ export function BundleDetailsModal({
               <X size={18} />
             </button>
 
-            <div className="relative h-48 shrink-0 sm:h-56">
+            <div className="relative h-36 shrink-0 sm:h-56">
               <CoverArt title={bundle.name} imageUrl={bundle.bannerImage} />
               <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/40 to-transparent" />
             </div>
@@ -91,7 +91,9 @@ export function BundleDetailsModal({
                 </div>
               )}
 
-              <p className="mt-5 text-sm leading-relaxed text-text-secondary">{bundle.description}</p>
+              <p className="mt-5 max-h-28 overflow-y-auto pr-1 text-sm leading-relaxed text-text-secondary sm:max-h-36">
+                {bundle.description}
+              </p>
 
               {includedGames.length > 0 && (
                 <div className="mt-6">

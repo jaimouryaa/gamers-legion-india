@@ -57,7 +57,7 @@ export function CartDrawer() {
                       className="flex gap-3 rounded-xl border border-border-glass bg-surface p-2.5"
                     >
                       <div className="h-16 w-16 shrink-0 overflow-hidden rounded-lg">
-                        <CoverArt title={item.title} genre={item.genre} imageUrl={item.coverImage} />
+                        <CoverArt title={item.title} genre={item.genre} imageUrl={item.coverImage} fit="contain" />
                       </div>
                       <div className="flex min-w-0 flex-1 flex-col justify-between">
                         <p className="truncate text-sm font-medium text-text-primary">

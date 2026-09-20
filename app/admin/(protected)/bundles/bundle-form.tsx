@@ -96,7 +96,7 @@ export function BundleForm({
                   className="flex items-center gap-1.5 rounded-full border border-accent-cyan/40 bg-accent-cyan/10 py-1 pl-1 pr-2.5 text-xs text-accent-cyan"
                 >
                   <span className="h-5 w-5 overflow-hidden rounded-full">
-                    <CoverArt title={g.title} genre={g.genre} imageUrl={g.coverImage} />
+                    <CoverArt title={g.title} genre={g.genre} imageUrl={g.coverImage} fit="contain" />
                   </span>
                   {g.title}
                 </span>
@@ -134,7 +134,7 @@ export function BundleForm({
                         className="h-4 w-4 accent-accent-cyan"
                       />
                       <span className="h-8 w-8 shrink-0 overflow-hidden rounded-lg">
-                        <CoverArt title={g.title} genre={g.genre} imageUrl={g.coverImage} />
+                        <CoverArt title={g.title} genre={g.genre} imageUrl={g.coverImage} fit="contain" />
                       </span>
                       <span className="min-w-0 flex-1 truncate text-sm text-text-primary">{g.title}</span>
                       <span className="shrink-0 text-xs text-text-muted">{formatINR(g.salePrice)}</span>

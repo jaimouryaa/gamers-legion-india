@@ -132,7 +132,7 @@ export function BundlesTable({ bundles }: { bundles: Bundle[] }) {
                 <td className="px-4 py-3">
                   <div className="flex items-center gap-3">
                     <div className="h-11 w-11 shrink-0 overflow-hidden rounded-lg">
-                      <CoverArt title={bundle.name} imageUrl={bundle.bannerImage} />
+                      <CoverArt title={bundle.name} imageUrl={bundle.bannerImage} fit="contain" />
                     </div>
                     <div className="min-w-0">
                       <p className="truncate font-medium text-text-primary">{bundle.name}</p>

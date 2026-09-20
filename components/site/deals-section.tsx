@@ -47,7 +47,7 @@ export function DealsSection({ deals }: { deals: Game[] }) {
               className="glass-panel flex cursor-pointer flex-col overflow-hidden rounded-2xl text-left transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03] hover:border-accent-magenta/40"
             >
               <div className="relative aspect-[4/3]">
-                <CoverArt title={game.title} genre={game.genre} imageUrl={game.coverImage} />
+                <CoverArt title={game.title} genre={game.genre} imageUrl={game.coverImage} fit="contain" />
                 <div className="absolute right-3 top-3">
                   <DiscountBadge percentage={game.discountPercentage} />
                 </div>

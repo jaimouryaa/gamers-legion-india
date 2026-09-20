@@ -27,7 +27,7 @@ export function BundleCard({ bundle, onOpen }: { bundle: Bundle; onOpen: (bundle
     >
       <div className="relative aspect-[16/9] shrink-0 overflow-hidden sm:aspect-auto sm:w-72">
         <div className="h-full w-full transition-transform duration-500 group-hover:scale-105">
-          <CoverArt title={bundle.name} imageUrl={bundle.bannerImage} />
+          <CoverArt title={bundle.name} imageUrl={bundle.bannerImage} fit="contain" />
         </div>
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent sm:bg-gradient-to-r" />
         <div className="absolute left-3 top-3 flex items-center gap-1.5 rounded-full bg-black/50 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur-sm">
