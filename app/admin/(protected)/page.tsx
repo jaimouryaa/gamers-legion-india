@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Gamepad2, Tag, Star, Plus, Package, Users } from "lucide-react";
+import { Gamepad2, Tag, Star, Plus, Package, ImageIcon } from "lucide-react";
 import { getAdminKpis, getAllGamesForAdmin } from "@/lib/queries/games";
 import { getAllBundlesForAdmin } from "@/lib/queries/bundles";
 import { KpiCard } from "@/components/admin/kpi-card";
@@ -38,7 +38,7 @@ export default async function AdminDashboardPage() {
           <QuickAction href="/admin/games/new" icon={Plus} label="Add game" />
           <QuickAction href="/admin/games" icon={Gamepad2} label="Manage games" />
           <QuickAction href="/admin/bundles/new" icon={Package} label="Create bundle" />
-          <QuickAction href="/admin/games" icon={Users} label="Manage users" disabled />
+          <QuickAction href="/admin/proofs/new" icon={ImageIcon} label="Add proof" />
         </div>
       </div>
 

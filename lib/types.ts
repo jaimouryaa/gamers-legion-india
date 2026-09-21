@@ -81,6 +81,24 @@ export interface BundleInput {
   expiresAt?: string;
 }
 
+export interface Proof {
+  id: string;
+  imageUrl: string;
+  caption: string | null;
+  gameId: string | null;
+  gameTitle?: string | null; // joined in for display, not a real column
+  gameSlug?: string | null;
+  published: boolean;
+  createdAt: string;
+}
+
+export interface ProofInput {
+  imageUrl: string;
+  caption?: string;
+  gameId?: string | null;
+  published: boolean;
+}
+
 export const GENRES = [
   "Action",
   "RPG",

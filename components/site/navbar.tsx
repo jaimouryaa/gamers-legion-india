@@ -4,12 +4,15 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Search, ShoppingCart, Heart, User } from "lucide-react";
+import { Menu, X, Search, ShoppingCart, Heart, User, MessageCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { NAV_LINKS } from "@/lib/config";
+import { NAV_LINKS, CONNECT } from "@/lib/config";
 import { useCart } from "@/lib/cart-store";
 import { useWishlist } from "@/lib/wishlist-store";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { ConnectDropdown } from "@/components/site/connect-dropdown";
+import { InstagramIcon } from "@/components/ui/social-icons";
+import { buildWhatsAppGeneralLink } from "@/lib/utils";
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
@@ -84,6 +87,7 @@ export function Navbar() {
               </Link>
             );
           })}
+          <ConnectDropdown />
         </nav>
 
         <div className="flex items-center gap-1">
@@ -186,6 +190,25 @@ export function Navbar() {
               >
                 Admin
               </Link>
+              <div className="my-2 border-t border-border-glass" />
+              <a
+                href={CONNECT.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-text-secondary hover:bg-white/5 hover:text-text-primary"
+              >
+                <InstagramIcon size={16} className="text-accent-magenta" />
+                Instagram
+              </a>
+              <a
+                href={buildWhatsAppGeneralLink()}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-text-secondary hover:bg-white/5 hover:text-text-primary"
+              >
+                <MessageCircle size={16} className="text-success" />
+                WhatsApp
+              </a>
               <div className="mt-2 flex items-center justify-between px-3">
                 <span className="text-xs font-medium text-text-muted">Theme</span>
                 <ThemeToggle />

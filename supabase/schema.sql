@@ -250,6 +250,40 @@ create policy "Admins can delete game images"
     and public.is_admin()
   );
 
+-- ---------------------------------------------------------------------------
+-- 4. PROOFS (admin-uploaded screenshots of completed sales, shown on /proof)
+-- ---------------------------------------------------------------------------
+create table proofs (
+  id uuid primary key default gen_random_uuid(),
+  image_url text not null,
+  caption text,
+  game_id uuid references games(id) on delete set null,
+  published boolean not null default true,
+  created_at timestamptz not null default now()
+);
+
+alter table proofs enable row level security;
+
+create policy "Public can view published proofs"
+  on proofs for select
+  using (published = true);
+
+create policy "Admins can view all proofs"
+  on proofs for select
+  using (public.is_admin());
+
+create policy "Admins can insert proofs"
+  on proofs for insert
+  with check (public.is_admin());
+
+create policy "Admins can update proofs"
+  on proofs for update
+  using (public.is_admin());
+
+create policy "Admins can delete proofs"
+  on proofs for delete
+  using (public.is_admin());
+
 -- ============================================================================
 -- After running this file:
 -- 1. Sign up for an account through /admin/login (the "Sign up" link) using

@@ -1,12 +1,9 @@
 import Link from "next/link";
-import { InstagramIcon, YoutubeIcon, XIcon, DiscordIcon } from "@/components/ui/social-icons";
+import { InstagramIcon } from "@/components/ui/social-icons";
 import { FOOTER, SITE } from "@/lib/config";
 
 const SOCIAL_ICONS: Record<string, typeof InstagramIcon> = {
   Instagram: InstagramIcon,
-  YouTube: YoutubeIcon,
-  X: XIcon,
-  Discord: DiscordIcon,
 };
 
 export function Footer() {

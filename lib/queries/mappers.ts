@@ -1,4 +1,4 @@
-import type { Bundle, Game } from "@/lib/types";
+import type { Bundle, Game, Proof } from "@/lib/types";
 
 // Supabase returns snake_case columns; the app works in camelCase.
 // Keeping this mapping in one place avoids scattering `row.sale_price`
@@ -27,6 +27,22 @@ export function mapGameRow(row: Record<string, unknown>): Game {
     tags: (row.tags as string[]) ?? [],
     createdAt: row.created_at as string,
     updatedAt: row.updated_at as string,
+  };
+}
+
+export function mapProofRow(row: Record<string, unknown>): Proof {
+  // When queried with a join (select("*, games(title, slug)")), Supabase
+  // nests the related row under the `games` key.
+  const joinedGame = row.games as { title?: string; slug?: string } | null;
+  return {
+    id: row.id as string,
+    imageUrl: row.image_url as string,
+    caption: (row.caption as string) ?? null,
+    gameId: (row.game_id as string) ?? null,
+    gameTitle: joinedGame?.title ?? null,
+    gameSlug: joinedGame?.slug ?? null,
+    published: Boolean(row.published),
+    createdAt: row.created_at as string,
   };
 }
 

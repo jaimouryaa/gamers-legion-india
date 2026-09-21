@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { LayoutDashboard, Gamepad2, Package, LogOut, X } from "lucide-react";
+import { LayoutDashboard, Gamepad2, Package, ImageIcon, LogOut, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { signOut } from "@/app/admin/login/actions";
 
@@ -10,6 +10,7 @@ const LINKS = [
   { label: "Dashboard", href: "/admin", icon: LayoutDashboard, exact: true },
   { label: "Games", href: "/admin/games", icon: Gamepad2, exact: false },
   { label: "Bundles", href: "/admin/bundles", icon: Package, exact: false },
+  { label: "Proofs", href: "/admin/proofs", icon: ImageIcon, exact: false },
 ];
 
 export function AdminSidebar({ onNavigate }: { onNavigate?: () => void }) {

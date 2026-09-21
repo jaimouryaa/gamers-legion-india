@@ -5,9 +5,11 @@ import { CoverArt } from "@/components/ui/cover-art";
 import { DiscountBadge } from "@/components/ui/badge";
 import { Rating } from "@/components/ui/rating";
 import { Price } from "@/components/ui/price";
+import Link from "next/link";
 import { formatINR, ogImageFor } from "@/lib/utils";
 import { GameGrid } from "@/components/site/game-grid";
 import { GameDetailActions } from "@/components/site/game-detail-actions";
+import { ActivationGuide } from "@/components/site/activation-guide";
 
 export async function generateMetadata({
   params,
@@ -92,6 +94,16 @@ export default async function GameDetailPage({
               )}
             </div>
             <GameDetailActions game={game} />
+          </div>
+
+          <div className="mt-8">
+            <h2 className="mb-3 font-display text-sm font-semibold uppercase tracking-wider text-text-muted">
+              How to activate
+            </h2>
+            <ActivationGuide platforms={game.platforms} defaultOpen={game.platforms.length === 1} />
+            <Link href="/proof" className="mt-3 inline-block text-xs font-medium text-accent-cyan hover:underline">
+              See all platform guides & delivery proof →
+            </Link>
           </div>
         </div>
       </div>
