@@ -10,6 +10,7 @@ import { RecentlyAdded } from "@/components/site/recently-added";
 import { ProofSection } from "@/components/site/proof-section";
 import { PromotionBanner } from "@/components/site/promotion-banner";
 import { FinalCTA } from "@/components/site/final-cta";
+import { StatsStrip } from "@/components/site/stats-strip";
 
 export default async function HomePage() {
   const [games, featured, featuredBundles, proofs] = await Promise.all([
@@ -34,6 +35,7 @@ export default async function HomePage() {
       <ProofSection proofs={proofs} />
       <PromotionBanner />
       <FinalCTA />
+      <StatsStrip />
     </>
   );
 }

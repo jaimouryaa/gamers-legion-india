@@ -1,17 +1,9 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowRight, Gamepad2, Tag, Users, ShieldCheck } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { LinkButton } from "@/components/ui/button";
-import { StatCounter } from "@/components/ui/stat-counter";
-import { HERO_STATS, SITE } from "@/lib/config";
-
-const ICONS = {
-  gamepad: Gamepad2,
-  tag: Tag,
-  users: Users,
-  shield: ShieldCheck,
-};
+import { SITE } from "@/lib/config";
 
 const container = {
   hidden: {},
@@ -93,24 +85,6 @@ export function Hero() {
               Today&apos;s deals
             </LinkButton>
           </motion.div>
-        </motion.div>
-
-        <motion.div
-          variants={container}
-          initial="hidden"
-          animate="show"
-          className="mt-20 grid grid-cols-2 gap-6 sm:grid-cols-4 lg:mt-24"
-        >
-          {HERO_STATS.map((stat) => {
-            const Icon = ICONS[stat.icon];
-            return (
-              <motion.div key={stat.label} variants={item} className="flex flex-col gap-2">
-                <Icon size={20} className="text-accent-primary" />
-                <StatCounter value={stat.value} />
-                <span className="text-xs text-text-muted sm:text-sm">{stat.label}</span>
-              </motion.div>
-            );
-          })}
         </motion.div>
       </div>
     </section>
