@@ -69,7 +69,7 @@ export const FOOTER = {
     { label: "Contact", href: "/contact" },
     { label: "Support", href: "/support" },
     { label: "FAQ", href: "/faq" },
-    { label: "Proof & Activation", href: "/proof" },
+    { label: "Proof & Game Activation", href: "/proof" },
   ],
   legal: [
     { label: "Terms", href: "/terms" },
