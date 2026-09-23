@@ -3,12 +3,12 @@ import Link from "next/link";
 import { ShieldCheck, Gamepad2 } from "lucide-react";
 import { getPublishedProofs } from "@/lib/queries/proofs";
 import { CoverArt } from "@/components/ui/cover-art";
-import { ActivationGuide } from "@/components/site/activation-guide";
+import { LevelUpActivation } from "@/components/site/level-up-activation";
 
 export const metadata: Metadata = {
-  title: "Proof & Activation Guide",
+  title: "Proof & Game Activation",
   description:
-    "See real completed deliveries from Gamers Legion India, and find step-by-step instructions for activating your game.",
+    "See real completed deliveries from Gamers Legion India and how your game gets activated.",
 };
 
 export default async function ProofPage() {
@@ -25,8 +25,7 @@ export default async function ProofPage() {
           Real deliveries. Real proof.
         </h1>
         <p className="mt-2 max-w-xl text-text-secondary">
-          A look at completed orders, plus step-by-step instructions for activating whatever you
-          buy.
+          A look at completed orders and how your game gets activated.
         </p>
       </div>
 
@@ -72,15 +71,7 @@ export default async function ProofPage() {
         )}
       </section>
 
-      <section className="mt-16">
-        <h2 className="mb-2 font-display text-lg font-semibold text-text-primary">
-          How to activate your game
-        </h2>
-        <p className="mb-5 text-sm text-text-muted">
-          Pick your platform below for step-by-step redemption instructions.
-        </p>
-        <ActivationGuide />
-      </section>
+      <LevelUpActivation />
     </div>
   );
 }

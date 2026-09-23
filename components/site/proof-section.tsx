@@ -12,7 +12,7 @@ export function ProofSection({ proofs }: { proofs: Proof[] }) {
       <SectionHeading
         eyebrow="Verified & trusted"
         title="Real deliveries, real proof"
-        subtitle="A look at recently completed orders — see it all, plus how to activate your game."
+        subtitle="A look at recently completed orders — see it all, plus how your game gets activated."
         viewAllHref="/proof"
       />
       <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -45,7 +45,7 @@ export function ProofSection({ proofs }: { proofs: Proof[] }) {
         className="mt-5 flex items-center justify-center gap-1.5 text-sm font-medium text-text-secondary hover:text-accent-cyan"
       >
         <ShieldCheck size={14} />
-        See all proof & activation guides
+        See all proof & game activation
       </Link>
     </section>
   );

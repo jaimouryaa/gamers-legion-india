@@ -102,7 +102,7 @@ export default async function GameDetailPage({
             </h2>
             <ActivationGuide platforms={game.platforms} defaultOpen={game.platforms.length === 1} />
             <Link href="/proof" className="mt-3 inline-block text-xs font-medium text-accent-cyan hover:underline">
-              See all platform guides & delivery proof →
+              See game activation & delivery proof →
             </Link>
           </div>
         </div>
