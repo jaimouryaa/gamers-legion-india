@@ -3,7 +3,7 @@
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 /* ---------------------------------------------------------------------- */
-/* GAMERS LEGION INDIA — burgundy / black gaming theme, dark by default,  */
+/* GAMERS LEGION INDIA — black gaming theme, dark by default,             */
 /* with a full light-mode override. Theme is toggled by setting           */
 /* data-theme="dark" | "light" on <html> (see lib/theme-store.ts).        */
 /* ---------------------------------------------------------------------- */
@@ -12,16 +12,16 @@
 [data-theme="dark"] {
   color-scheme: dark;
 
-  --void: #0b0508;
-  --surface: #170a10;
-  --surface-elevated: #221019;
-  --surface-glass: rgba(34, 16, 25, 0.62);
-  --border-glass: rgba(196, 120, 140, 0.16);
-  --border-glass-strong: rgba(196, 120, 140, 0.32);
+  --void: #050505;
+  --surface: #111111;
+  --surface-elevated: #1b1b1b;
+  --surface-glass: rgba(20, 20, 20, 0.78);
+  --border-glass: rgba(255, 255, 255, 0.12);
+  --border-glass-strong: rgba(255, 255, 255, 0.22);
 
-  --text-primary: #f7eef0;
-  --text-secondary: #c7a3ac;
-  --text-muted: #8a636b;
+  --text-primary: #f7f7f7;
+  --text-secondary: #c7c7c7;
+  --text-muted: #999999;
 
   /* Burgundy / wine accent family */
   --accent-cyan: #d4335f;    /* primary — bright crimson-burgundy */
@@ -139,6 +139,115 @@ body {
     radial-gradient(60% 50% at 15% 10%, color-mix(in srgb, var(--accent-cyan) 16%, transparent), transparent 60%),
     radial-gradient(50% 45% at 85% 20%, color-mix(in srgb, var(--accent-violet) 16%, transparent), transparent 60%),
     radial-gradient(80% 60% at 50% 100%, color-mix(in srgb, var(--accent-blue) 12%, transparent), transparent 60%);
+}
+
+/* Arcade motion uses the existing accent palette and leaves content readable. */
+.arcade-hero-grid::before {
+  content: "";
+  position: absolute;
+  inset: -65px;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--accent-cyan) 18%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--accent-cyan) 18%, transparent) 1px, transparent 1px);
+  background-size: 65px 65px;
+  opacity: 0.23;
+  mask-image: linear-gradient(to bottom, transparent 8%, black 75%);
+  animation: arcade-grid-drift 12s linear infinite;
+}
+
+.arcade-hero-logo {
+  animation: arcade-logo-float 6s ease-in-out infinite alternate;
+}
+
+.arcade-hero-glow {
+  animation: arcade-glow-breathe 3.4s ease-in-out infinite alternate;
+}
+
+.arcade-title {
+  background-size: 220% 100%;
+  animation: arcade-gradient-shift 4s ease-in-out infinite alternate;
+}
+
+.arcade-cta {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.arcade-cta::after {
+  content: "";
+  position: absolute;
+  inset: -40% auto -40% -40%;
+  width: 22%;
+  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 34%), transparent);
+  transform: skewX(-25deg) translateX(-100%);
+  pointer-events: none;
+}
+
+.arcade-cta:hover::after,
+.arcade-cta:focus-visible::after {
+  animation: arcade-button-sheen 0.7s ease-out forwards;
+}
+
+.arcade-stage:hover,
+.arcade-stage:focus-within {
+  box-shadow: 0 14px 35px -18px color-mix(in srgb, var(--accent-cyan) 55%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--accent-magenta) 30%, transparent);
+}
+
+.arcade-stage svg {
+  transition: transform 0.25s ease;
+}
+
+.arcade-stage:hover svg {
+  transform: rotate(-6deg) scale(1.12);
+}
+
+.arcade-finisher {
+  box-shadow: 0 0 22px -14px var(--accent-magenta);
+}
+
+.arcade-card {
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.arcade-card:hover,
+.arcade-card:focus-visible,
+.arcade-card:focus-within {
+  box-shadow: 0 16px 38px -20px color-mix(in srgb, var(--accent-cyan) 58%, transparent),
+    inset 0 0 0 1px color-mix(in srgb, var(--accent-magenta) 28%, transparent);
+}
+
+.arcade-promo-orb {
+  animation: arcade-orb-pulse 5s ease-in-out infinite alternate;
+}
+
+.arcade-promo-orb:nth-child(2) {
+  animation-delay: -2.5s;
+}
+
+@keyframes arcade-grid-drift {
+  to { transform: translate3d(65px, 65px, 0); }
+}
+
+@keyframes arcade-logo-float {
+  to { transform: translate3d(0, -14px, 0) scale(1.025); }
+}
+
+@keyframes arcade-glow-breathe {
+  to { opacity: 0.35; }
+}
+
+@keyframes arcade-gradient-shift {
+  to { background-position: 100% 0; }
+}
+
+@keyframes arcade-button-sheen {
+  to { transform: skewX(-25deg) translateX(650%); }
+}
+
+@keyframes arcade-orb-pulse {
+  to { opacity: 0.45; transform: scale(1.16); }
 }
 
 .input {

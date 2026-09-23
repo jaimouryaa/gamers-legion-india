@@ -23,7 +23,7 @@ export function BundleCard({ bundle, onOpen }: { bundle: Bundle; onOpen: (bundle
       whileHover={{ y: -4, scale: 1.015 }}
       whileTap={{ scale: 0.99 }}
       transition={{ duration: 0.25, ease: "easeOut" }}
-      className="group glass-panel flex cursor-pointer flex-col overflow-hidden rounded-2xl text-left transition-colors hover:border-accent-violet/40 sm:flex-row"
+      className="arcade-card group glass-panel flex cursor-pointer flex-col overflow-hidden rounded-2xl text-left transition-colors hover:border-accent-violet/40 sm:flex-row"
     >
       <div className="relative aspect-[16/9] shrink-0 overflow-hidden sm:aspect-auto sm:w-72">
         <div className="h-full w-full transition-transform duration-500 group-hover:scale-105">

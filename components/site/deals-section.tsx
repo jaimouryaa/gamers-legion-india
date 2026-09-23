@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Heart } from "lucide-react";
 import { SectionHeading } from "@/components/ui/section-heading";
+import { ArcadeReveal } from "@/components/site/arcade-reveal";
 import { CoverArt } from "@/components/ui/cover-art";
 import { DiscountBadge } from "@/components/ui/badge";
 import { Rating } from "@/components/ui/rating";
@@ -23,18 +24,20 @@ export function DealsSection({ deals }: { deals: Game[] }) {
 
   return (
     <section className="mx-auto max-w-7xl px-4 py-16 sm:px-6 lg:px-8">
-      <SectionHeading
-        eyebrow="Act fast"
-        title="Limited-time deals"
-        subtitle="Don't miss out. These deals won't last forever."
-        viewAllHref="/deals"
-      />
+      <ArcadeReveal>
+        <SectionHeading
+          eyebrow="Act fast"
+          title="Limited-time deals"
+          subtitle="Don't miss out. These deals won't last forever."
+          viewAllHref="/deals"
+        />
+      </ArcadeReveal>
       <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        {deals.slice(0, 8).map((game) => {
+        {deals.slice(0, 8).map((game, i) => {
           const wishlisted = isWishlisted(game.id);
           return (
+            <ArcadeReveal key={game.id} delay={Math.min(i, 7) * 0.055} className="h-full">
             <div
-              key={game.id}
               role="button"
               tabIndex={0}
               onClick={() => setActive(game)}
@@ -44,7 +47,7 @@ export function DealsSection({ deals }: { deals: Game[] }) {
                   setActive(game);
                 }
               }}
-              className="glass-panel flex cursor-pointer flex-col overflow-hidden rounded-2xl text-left transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03] hover:border-accent-magenta/40"
+              className="arcade-card glass-panel flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl text-left transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03] hover:border-accent-magenta/40"
             >
               <div className="relative aspect-[4/3]">
                 <CoverArt title={game.title} genre={game.genre} imageUrl={game.coverImage} fit="contain" />
@@ -78,6 +81,7 @@ export function DealsSection({ deals }: { deals: Game[] }) {
                 {game.dealExpiry && <Countdown expiresAt={game.dealExpiry} />}
               </div>
             </div>
+            </ArcadeReveal>
           );
         })}
       </div>

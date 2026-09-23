@@ -31,7 +31,7 @@ export function GameCard({ game, onOpen }: { game: Game; onOpen: (game: Game) =>
       whileHover={{ y: -6, scale: 1.035 }}
       whileTap={{ scale: 0.98 }}
       transition={{ duration: 0.25, ease: "easeOut" }}
-      className="group glass-panel flex cursor-pointer flex-col overflow-hidden rounded-2xl text-left transition-colors hover:border-accent-cyan/40"
+      className="arcade-card group glass-panel flex cursor-pointer flex-col overflow-hidden rounded-2xl text-left transition-colors hover:border-accent-cyan/40"
     >
       <div className="relative aspect-[4/3] overflow-hidden">
         <div className="h-full w-full transition-transform duration-500 group-hover:scale-110">

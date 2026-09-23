@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { motion } from "framer-motion";
+import { MotionConfig, motion } from "framer-motion";
 import { SearchX } from "lucide-react";
 import { GameCard } from "@/components/site/game-card";
 import { GameDetailsModal } from "@/components/site/game-details-modal";
@@ -23,15 +23,16 @@ export function GameGrid({ games }: { games: Game[] }) {
   }
 
   return (
+    <MotionConfig reducedMotion="user">
     <>
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
         {games.map((game, i) => (
           <motion.div
             key={game.id}
-            initial={{ opacity: 0, y: 14 }}
-            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 24, scale: 0.97 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
             viewport={{ once: true, margin: "-40px" }}
-            transition={{ duration: 0.35, delay: Math.min(i, 8) * 0.04 }}
+            transition={{ type: "spring", stiffness: 230, damping: 25, delay: Math.min(i, 7) * 0.055 }}
           >
             <GameCard game={game} onOpen={setActive} />
           </motion.div>
@@ -39,6 +40,7 @@ export function GameGrid({ games }: { games: Game[] }) {
       </div>
       <GameDetailsModal game={active} onClose={() => setActive(null)} />
     </>
+    </MotionConfig>
   );
 }
 

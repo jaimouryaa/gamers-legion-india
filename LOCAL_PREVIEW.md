@@ -1,6 +1,10 @@
 # Preview the updated activation page locally
 
-This project contains the new **Level Up: How Your Game Gets Activated** section on the Proof page. It replaces the platform accordion shown in your screenshot. The attached logo is now used as the browser favicon and as a soft watermark behind the homepage hero text.
+This project contains the new **Level Up: How Your Game Gets Activated** section on the Proof page. It replaces the platform accordion shown in your screenshot. The attached logo is used as the browser favicon and as a soft watermark behind the homepage hero text. The default dark theme now uses black and neutral charcoal surfaces while keeping its colored gradients and animations.
+
+The homepage hero now has arcade-style grid, logo, gradient-text, and button motion. The activation cards reveal in order as you scroll to them, and their borders glow on hover. The activation wording is unchanged. Motion is reduced automatically when your device requests reduced animation.
+
+Homepage feature tiles, games, bundles, deals, recent additions, proof, promotion, and closing sections also animate into view, with hover effects on cards and buttons.
 
 ## Windows (PowerShell)
 

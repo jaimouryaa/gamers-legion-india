@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { MotionConfig, motion } from "framer-motion";
 import { Gamepad2, Tag, Users, ShieldCheck } from "lucide-react";
 import { StatCounter } from "@/components/ui/stat-counter";
 import { HERO_STATS } from "@/lib/config";
@@ -24,6 +24,7 @@ const item = {
 
 export function StatsStrip() {
   return (
+    <MotionConfig reducedMotion="user">
     <section className="border-t border-border-glass bg-surface/30">
       <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
         <motion.div
@@ -36,7 +37,7 @@ export function StatsStrip() {
           {HERO_STATS.map((stat) => {
             const Icon = ICONS[stat.icon];
             return (
-              <motion.div key={stat.label} variants={item} className="flex flex-col gap-2">
+              <motion.div key={stat.label} variants={item} className="group flex flex-col gap-2">
                 <Icon size={20} className="text-accent-primary" />
                 <StatCounter value={stat.value} />
                 <span className="text-xs text-text-muted sm:text-sm">{stat.label}</span>
@@ -46,5 +47,6 @@ export function StatsStrip() {
         </motion.div>
       </div>
     </section>
+    </MotionConfig>
   );
 }

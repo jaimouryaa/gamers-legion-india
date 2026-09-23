@@ -1,3 +1,6 @@
+"use client";
+
+import { MotionConfig, motion } from "framer-motion";
 import {
   BadgeCheck,
   Gamepad2,
@@ -44,8 +47,24 @@ const stages = [
   },
 ] as const;
 
+const listVariants = {
+  hidden: {},
+  visible: { transition: { staggerChildren: 0.13, delayChildren: 0.08 } },
+};
+
+const cardVariants = {
+  hidden: { opacity: 0, y: 28, scale: 0.96 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { type: "spring" as const, stiffness: 230, damping: 25 },
+  },
+};
+
 export function LevelUpActivation() {
   return (
+    <MotionConfig reducedMotion="user">
     <section aria-labelledby="activation-title" className="mt-16">
       <div className="relative overflow-hidden rounded-3xl border border-border-glass-strong bg-surface-elevated px-5 py-8 sm:px-8 sm:py-10">
         <div
@@ -61,13 +80,20 @@ export function LevelUpActivation() {
             Level Up: How Your Game Gets Activated
           </h2>
 
-          <ol className="mt-8 grid gap-4 md:grid-cols-2">
+          <motion.ol
+            className="mt-8 grid gap-4 md:grid-cols-2"
+            variants={listVariants}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.08 }}
+          >
             {stages.map((stage, index) => {
               const Icon = stage.icon;
               return (
-                <li
+                <motion.li
                   key={stage.title}
-                  className="group relative overflow-hidden rounded-2xl border border-border-glass-strong bg-surface/85 p-5 transition-colors hover:border-accent-cyan/60 sm:p-6"
+                  variants={cardVariants}
+                  className="arcade-stage group relative overflow-hidden rounded-2xl border border-border-glass-strong bg-surface/85 p-5 transition-[border-color,box-shadow] hover:border-accent-cyan/60 sm:p-6"
                 >
                   <div className="mb-5 flex items-center justify-between">
                     <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-accent-cyan/25 bg-accent-cyan/10 text-accent-magenta">
@@ -78,9 +104,9 @@ export function LevelUpActivation() {
                     </span>
                   </div>
                   <h3 className="font-display text-lg font-bold text-text-primary">
-                    {stage.title}
+                    {stage.title}:
                   </h3>
-                  <p className="mt-3 text-sm leading-7 text-text-secondary">
+                  <p className="mt-3 whitespace-pre-wrap text-sm leading-7 text-text-secondary">
                     {stage.description}
                   </p>
                   {"signoff" in stage && stage.signoff && (
@@ -88,12 +114,18 @@ export function LevelUpActivation() {
                       {stage.signoff}
                     </p>
                   )}
-                </li>
+                </motion.li>
               );
             })}
-          </ol>
+          </motion.ol>
 
-          <div className="mt-4 flex flex-col gap-4 rounded-2xl border border-accent-cyan/40 bg-accent-cyan/10 p-5 sm:flex-row sm:items-center sm:p-6">
+          <motion.div
+            className="arcade-finisher mt-4 flex flex-col gap-4 rounded-2xl border border-accent-cyan/40 bg-accent-cyan/10 p-5 sm:flex-row sm:items-center sm:p-6"
+            initial={{ opacity: 0, y: 18, scale: 0.98 }}
+            whileInView={{ opacity: 1, y: 0, scale: 1 }}
+            viewport={{ once: true, amount: 0.65 }}
+            transition={{ type: "spring", stiffness: 230, damping: 25 }}
+          >
             <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-accent-cyan text-white">
               <BadgeCheck size={23} aria-hidden="true" />
             </span>
@@ -101,9 +133,10 @@ export function LevelUpActivation() {
               <strong className="font-display text-base text-accent-magenta">Zero Friendly Fire:</strong>{" "}
               100% visible on your screen, lightning-fast 3-5 minute setup, while you hold the controller the entire time.
             </p>
-          </div>
+          </motion.div>
         </div>
       </div>
     </section>
+    </MotionConfig>
   );
 }
