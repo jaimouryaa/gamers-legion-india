@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { LinkButton } from "@/components/ui/button";
@@ -31,31 +32,14 @@ export function Hero() {
         <div className="absolute bottom-0 left-1/2 h-64 w-[60%] -translate-x-1/2 rounded-full bg-accent-primary/10 blur-[120px]" />
       </motion.div>
 
-      {/* Subtle "character" silhouette suggestion via layered shapes, no external art */}
-      <div className="pointer-events-none absolute inset-y-0 right-0 hidden w-[45%] lg:block">
-        <div className="absolute inset-0 bg-gradient-to-l from-void via-void/60 to-transparent" />
-        <svg
-          viewBox="0 0 400 600"
-          className="absolute bottom-0 right-8 h-[110%] w-auto opacity-[0.14]"
-          fill="none"
+      {/* A soft brand watermark sits behind the copy without competing with it. */}
+      <div aria-hidden="true" className="pointer-events-none absolute inset-0 overflow-hidden">
+        <div
+          className="absolute left-1/2 top-1/2 aspect-square w-[min(115vw,52rem)] -translate-x-1/2 -translate-y-1/2 opacity-[0.10] mix-blend-multiply dark:opacity-[0.20] dark:mix-blend-screen lg:left-[45%]"
+          style={{ maskImage: "radial-gradient(ellipse, black 28%, transparent 72%)" }}
         >
-          <path
-            d="M200 40 L360 130 L360 420 L200 560 L40 420 L40 130 Z"
-            stroke="url(#hero-grad)"
-            strokeWidth="1.5"
-          />
-          <path
-            d="M200 120 L300 175 L300 370 L200 470 L100 370 L100 175 Z"
-            stroke="url(#hero-grad)"
-            strokeWidth="1"
-          />
-          <defs>
-            <linearGradient id="hero-grad" x1="0" y1="0" x2="400" y2="600">
-              <stop offset="0%" stopColor="#35e0ee" />
-              <stop offset="100%" stopColor="#9b6bff" />
-            </linearGradient>
-          </defs>
-        </svg>
+          <Image src="/hero-brand.png" alt="" fill sizes="(max-width: 768px) 100vw, 832px" className="object-contain" />
+        </div>
       </div>
 
       <div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
