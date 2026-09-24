@@ -4,7 +4,6 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { AdminSidebar } from "@/components/admin/sidebar";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export function AdminShell({
   children,
@@ -60,7 +59,6 @@ export function AdminShell({
           </button>
           <div className="hidden lg:block" />
           <div className="flex items-center gap-3 text-sm text-text-secondary">
-            <ThemeToggle />
             <span className="hidden sm:inline">{adminEmail}</span>
             <span className="flex h-8 w-8 items-center justify-center rounded-full bg-accent-primary/15 text-xs font-semibold text-accent-primary">
               {adminEmail.slice(0, 1).toUpperCase()}

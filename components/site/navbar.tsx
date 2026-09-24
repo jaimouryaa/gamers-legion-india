@@ -9,7 +9,6 @@ import { cn } from "@/lib/utils";
 import { NAV_LINKS, CONNECT } from "@/lib/config";
 import { useCart } from "@/lib/cart-store";
 import { useWishlist } from "@/lib/wishlist-store";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { ConnectDropdown } from "@/components/site/connect-dropdown";
 import { InstagramIcon } from "@/components/ui/social-icons";
 import { buildWhatsAppGeneralLink } from "@/lib/utils";
@@ -54,36 +53,53 @@ export function Navbar() {
       className={cn(
         "sticky top-0 z-50 border-b backdrop-blur-xl transition-[background-color,border-color,box-shadow] duration-300",
         scrolled
-          ? "border-border-glass bg-void/85 shadow-[0_4px_30px_-10px_rgba(0,0,0,0.6)]"
-          : "border-transparent bg-void/40"
+          ? "border-border-glass bg-void/95 shadow-[0_4px_30px_-10px_rgba(0,0,0,0.6)]"
+          : "border-border-glass bg-void/90"
       )}
     >
       <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
-        <Link href="/" className="flex items-center gap-2.5 shrink-0">
-          {/* eslint-disable-next-line @next/next/no-img-element -- small
-              static brand asset from /public, not worth next/image here */}
-          <img src="/logo.png" alt="Gamers Legion India" className="h-9 w-auto" />
+        <Link
+          href="/"
+          aria-label="Gamers Legion India home"
+          className="group flex shrink-0 items-center rounded-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-accent-cyan"
+        >
+          <svg
+            viewBox="23 27 545 105"
+            role="img"
+            aria-label="Gamers Legion India"
+            className="w-28 transition-transform duration-200 group-hover:scale-[1.04] sm:w-44 lg:w-48 xl:w-52"
+          >
+            <defs>
+              <filter id="navbar-logo-transparent-black" colorInterpolationFilters="sRGB">
+                <feColorMatrix
+                  type="matrix"
+                  values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0.9 0.9 0.9 0 0"
+                />
+              </filter>
+            </defs>
+            <image
+              href="/navbar-wordmark.png"
+              width="630"
+              height="153"
+              filter="url(#navbar-logo-transparent-black)"
+            />
+          </svg>
         </Link>
 
-        <nav className="hidden items-center gap-1 md:flex">
+        <nav className="hidden items-center gap-1 lg:flex">
           {NAV_LINKS.map((link) => {
             const active = pathname === link.href;
             return (
               <Link
                 key={link.href}
                 href={link.href}
+                aria-current={active ? "page" : undefined}
                 className={cn(
-                  "relative px-4 py-2 text-sm font-medium transition-colors",
-                  active ? "text-text-primary" : "text-text-secondary hover:text-text-primary"
+                  "rounded-lg px-3 py-2 text-sm font-medium transition-colors",
+                  active ? "bg-white/5 text-text-primary" : "text-text-secondary hover:bg-white/5 hover:text-text-primary"
                 )}
               >
                 {link.label}
-                {active && (
-                  <motion.span
-                    layoutId="nav-active"
-                    className="absolute inset-x-3 -bottom-[1px] h-[2px] rounded-full bg-accent-primary"
-                  />
-                )}
               </Link>
             );
           })}
@@ -91,18 +107,18 @@ export function Navbar() {
         </nav>
 
         <div className="flex items-center gap-1">
-          <ThemeToggle className="mr-1 hidden sm:flex" />
           <button
             aria-label="Search"
+            aria-expanded={searchOpen}
             onClick={() => setSearchOpen((v) => !v)}
-            className="flex h-10 w-10 items-center justify-center rounded-full text-text-secondary transition-colors hover:bg-white/5 hover:text-text-primary"
+            className={cn("nav-action flex h-10 w-10 items-center justify-center", searchOpen && "nav-action-primary")}
           >
             <Search size={18} />
           </button>
           <button
             aria-label={`Wishlist, ${wishlistCount} games`}
             onClick={openWishlist}
-            className="relative flex h-10 w-10 items-center justify-center rounded-full text-text-secondary transition-colors hover:bg-white/5 hover:text-text-primary"
+            className="nav-action relative flex h-10 w-10 items-center justify-center"
           >
             <Heart size={18} className={wishlistCount > 0 ? "fill-accent-magenta text-accent-magenta" : undefined} />
             {wishlistCount > 0 && (
@@ -114,7 +130,7 @@ export function Navbar() {
           <button
             aria-label={`Cart, ${count} items`}
             onClick={openCart}
-            className="relative flex h-10 w-10 items-center justify-center rounded-full text-text-secondary transition-colors hover:bg-white/5 hover:text-text-primary"
+            className="nav-action nav-action-primary relative flex h-10 w-10 items-center justify-center"
           >
             <ShoppingCart size={18} />
             {count > 0 && (
@@ -126,14 +142,15 @@ export function Navbar() {
           <Link
             href="/admin"
             aria-label="Account"
-            className="hidden h-10 w-10 items-center justify-center rounded-full text-text-secondary transition-colors hover:bg-white/5 hover:text-text-primary sm:flex"
+            className="nav-action hidden h-10 w-10 items-center justify-center sm:flex"
           >
             <User size={18} />
           </Link>
           <button
             aria-label="Menu"
+            aria-expanded={mobileOpen}
             onClick={() => setMobileOpen((v) => !v)}
-            className="flex h-10 w-10 items-center justify-center rounded-full text-text-secondary hover:bg-white/5 hover:text-text-primary md:hidden"
+            className={cn("nav-action flex h-10 w-10 items-center justify-center lg:hidden", mobileOpen && "nav-action-primary")}
           >
             {mobileOpen ? <X size={20} /> : <Menu size={20} />}
           </button>
@@ -172,7 +189,7 @@ export function Navbar() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="overflow-hidden border-t border-border-glass bg-void/95 backdrop-blur-xl md:hidden"
+            className="overflow-hidden border-t border-border-glass bg-void/95 backdrop-blur-xl lg:hidden"
           >
             <nav className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-4 sm:px-6">
               {NAV_LINKS.map((link) => (
@@ -209,10 +226,6 @@ export function Navbar() {
                 <MessageCircle size={16} className="text-success" />
                 WhatsApp
               </a>
-              <div className="mt-2 flex items-center justify-between px-3">
-                <span className="text-xs font-medium text-text-muted">Theme</span>
-                <ThemeToggle />
-              </div>
             </nav>
           </motion.div>
         )}

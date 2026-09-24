@@ -116,7 +116,7 @@ export function GameDetailsModal({
                 <div className="flex flex-1 flex-wrap gap-2.5 sm:flex-none">
                   <Button
                     variant="secondary"
-                    onClick={() =>
+                    onClick={() => {
                       addItem({
                         id: game.id,
                         title: game.title,
@@ -125,8 +125,9 @@ export function GameDetailsModal({
                         originalPrice: game.originalPrice,
                         coverImage: game.coverImage,
                         genre: game.genre,
-                      })
-                    }
+                      });
+                      onClose();
+                    }}
                   >
                     <ShoppingCart size={16} />
                     Add to cart

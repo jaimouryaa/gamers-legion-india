@@ -32,8 +32,8 @@ export default function PrivacyPage() {
           database provider, Supabase, with access restricted to authorized staff.
         </Section>
         <Section title="Cookies">
-          We use a small amount of local browser storage to remember your cart, wishlist, and
-          light/dark theme preference. We don&apos;t use tracking or advertising cookies.
+          We use a small amount of local browser storage to remember your cart and wishlist.
+          The site follows your device&apos;s appearance setting. We don&apos;t use tracking or advertising cookies.
         </Section>
         <Section title="Third parties">
           Orders are confirmed over WhatsApp, a service operated by Meta — its own privacy policy

@@ -1,10 +1,13 @@
 # Preview the updated activation page locally
 
-This project contains the new **Level Up: How Your Game Gets Activated** section on the Proof page. It replaces the platform accordion shown in your screenshot. The attached logo is used as the browser favicon and as a soft watermark behind the homepage hero text. The default dark theme now uses black and neutral charcoal surfaces while keeping its colored gradients and animations.
+This project contains the new **Level Up: How Your Game Gets Activated** section on the Proof page. It replaces the platform accordion shown in your screenshot. The attached logo is used as the browser favicon and as a soft watermark behind the homepage hero text. The site follows your device's light or dark setting automatically, with black and neutral charcoal surfaces in dark mode while keeping its colored gradients and animations.
 
 The homepage hero now has arcade-style grid, logo, gradient-text, and button motion. The activation cards reveal in order as you scroll to them, and their borders glow on hover. The activation wording is unchanged. Motion is reduced automatically when your device requests reduced animation.
 
+
 Homepage feature tiles, games, bundles, deals, recent additions, proof, promotion, and closing sections also animate into view, with hover effects on cards and buttons.
+
+The navbar uses the supplied Gamers Legion India wordmark, with its black image background made transparent to match either system theme, and simple action buttons for Search, Wishlist, Cart, Account, and Menu. The action buttons have clear hover, focus, and press states; the active link has a quiet background highlight.
 
 ## Windows (PowerShell)
 

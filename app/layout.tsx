@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Chakra_Petch, Inter } from "next/font/google";
-import Script from "next/script";
 import { Toaster } from "sonner";
-import { THEME_INIT_SCRIPT } from "@/lib/theme-store";
 import "./globals.css";
 
 const chakra = Chakra_Petch({
@@ -44,19 +42,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     <html
       lang="en"
       className={`${chakra.variable} ${inter.variable} h-full antialiased`}
-      suppressHydrationWarning
     >
-      <head>
-        <Script
-          id="theme-init"
-          strategy="beforeInteractive"
-          dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }}
-        />
-      </head>
       <body className="min-h-full flex flex-col bg-void" suppressHydrationWarning>
         {children}
         <Toaster
-          theme="dark"
+          theme="system"
           position="top-right"
           toastOptions={{
             style: {

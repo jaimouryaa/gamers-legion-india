@@ -139,7 +139,6 @@ lib/
   auth/require-admin.ts   server-side admin gate, used in every protected page/action
   queries/games.ts        all game reads, with graceful fallback to demo data
   validation/              Zod schemas for admin forms
-  theme-store.ts           light/dark/system theme, persisted + no-flash
   cart-store.ts            client-side cart, persisted to localStorage
   data/fallback-games.ts   demo data used only when Supabase isn't configured yet
 supabase/

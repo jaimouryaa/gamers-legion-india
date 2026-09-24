@@ -1,44 +1,10 @@
 @import "tailwindcss";
 
-@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
-
 /* ---------------------------------------------------------------------- */
-/* GAMERS LEGION INDIA — black gaming theme, dark by default,             */
-/* with a full light-mode override. Theme is toggled by setting           */
-/* data-theme="dark" | "light" on <html> (see lib/theme-store.ts).        */
+/* GAMERS LEGION INDIA — follow the device color scheme automatically.     */
 /* ---------------------------------------------------------------------- */
 
-:root,
-[data-theme="dark"] {
-  color-scheme: dark;
-
-  --void: #050505;
-  --surface: #111111;
-  --surface-elevated: #1b1b1b;
-  --surface-glass: rgba(20, 20, 20, 0.78);
-  --border-glass: rgba(255, 255, 255, 0.12);
-  --border-glass-strong: rgba(255, 255, 255, 0.22);
-
-  --text-primary: #f7f7f7;
-  --text-secondary: #c7c7c7;
-  --text-muted: #999999;
-
-  /* Burgundy / wine accent family */
-  --accent-cyan: #d4335f;    /* primary — bright crimson-burgundy */
-  --accent-blue: #7a1130;    /* deep burgundy — gradient partner */
-  --accent-violet: #b8123f;  /* wine highlight */
-  --accent-magenta: #ff4d70; /* rose — badges */
-
-  --success: #34d399;
-  --warning: #e8b84b;
-  --danger: #ff6b52;
-
-  --radius-md: 14px;
-  --radius-lg: 20px;
-  --radius-xl: 28px;
-}
-
-[data-theme="light"] {
+:root {
   color-scheme: light;
 
   --void: #faf5f6;
@@ -60,6 +26,37 @@
   --success: #0f9d68;
   --warning: #b3791a;
   --danger: #d1381f;
+
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-xl: 28px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    color-scheme: dark;
+
+    --void: #050505;
+    --surface: #111111;
+    --surface-elevated: #1b1b1b;
+    --surface-glass: rgba(20, 20, 20, 0.78);
+    --border-glass: rgba(255, 255, 255, 0.12);
+    --border-glass-strong: rgba(255, 255, 255, 0.22);
+
+    --text-primary: #f7f7f7;
+    --text-secondary: #c7c7c7;
+    --text-muted: #999999;
+
+    /* Burgundy / wine accent family */
+    --accent-cyan: #d4335f;    /* primary — bright crimson-burgundy */
+    --accent-blue: #7a1130;    /* deep burgundy — gradient partner */
+    --accent-violet: #b8123f;  /* wine highlight */
+    --accent-magenta: #ff4d70; /* rose — badges */
+
+    --success: #34d399;
+    --warning: #e8b84b;
+    --danger: #ff6b52;
+  }
 }
 
 @theme inline {
@@ -224,6 +221,38 @@ body {
 
 .arcade-promo-orb:nth-child(2) {
   animation-delay: -2.5s;
+}
+
+.nav-action {
+  border: 1px solid var(--border-glass-strong);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--surface) 72%, transparent);
+  color: var(--text-secondary);
+  transition: transform 0.18s ease, border-color 0.18s ease, background-color 0.18s ease, color 0.18s ease;
+}
+
+.nav-action:hover,
+.nav-action:focus-visible {
+  transform: translateY(-2px);
+  border-color: color-mix(in srgb, var(--accent-cyan) 55%, transparent);
+  background: color-mix(in srgb, var(--accent-cyan) 13%, var(--surface));
+  color: var(--text-primary);
+  box-shadow: 0 8px 20px -13px var(--accent-cyan);
+}
+
+.nav-action:focus-visible {
+  outline: 2px solid var(--accent-cyan);
+  outline-offset: 2px;
+}
+
+.nav-action:active {
+  transform: scale(0.95);
+}
+
+.nav-action-primary {
+  border-color: color-mix(in srgb, var(--accent-cyan) 40%, transparent);
+  background: color-mix(in srgb, var(--accent-cyan) 12%, var(--surface));
+  color: var(--accent-magenta);
 }
 
 @keyframes arcade-grid-drift {
