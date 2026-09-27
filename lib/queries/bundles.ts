@@ -15,13 +15,15 @@ export async function getPublicBundles(): Promise<Bundle[]> {
     .eq("status", "active")
     .order("created_at", { ascending: false });
 
-  if (error || !data) return FALLBACK_BUNDLES;
+  // Fall back to seed data when the table is empty (same pattern as games).
+  if (error || !data || data.length === 0) return FALLBACK_BUNDLES;
   return data.map(mapBundleRow);
 }
 
 export async function getFeaturedBundles(): Promise<Bundle[]> {
   const bundles = await getPublicBundles();
-  return bundles.filter((b) => b.featured);
+  const featured = bundles.filter((b) => b.featured);
+  return featured.length > 0 ? featured : bundles;
 }
 
 export async function getBundleBySlug(slug: string): Promise<Bundle | null> {

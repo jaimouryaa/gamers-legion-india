@@ -1,5 +1,5 @@
 import { getPublicGames, getFeaturedGames, getActiveDeals } from "@/lib/queries/games";
-import { getFeaturedBundles } from "@/lib/queries/bundles";
+import { getPublicBundles } from "@/lib/queries/bundles";
 import { getPublishedProofs } from "@/lib/queries/proofs";
 import { Hero } from "@/components/site/hero";
 import { FeatureStrip } from "@/components/site/feature-strip";
@@ -13,12 +13,14 @@ import { FinalCTA } from "@/components/site/final-cta";
 import { StatsStrip } from "@/components/site/stats-strip";
 
 export default async function HomePage() {
-  const [games, featured, featuredBundles, proofs] = await Promise.all([
+  const [games, featured, allBundles, proofs] = await Promise.all([
     getPublicGames(),
     getFeaturedGames(),
-    getFeaturedBundles(),
+    getPublicBundles(),
     getPublishedProofs(),
   ]);
+  const featuredBundles = allBundles.filter((b) => b.featured);
+  const displayBundles = featuredBundles.length > 0 ? featuredBundles : allBundles;
   const recentlyAdded = [...games].sort(
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
@@ -29,9 +31,9 @@ export default async function HomePage() {
       <Hero />
       <FeatureStrip />
       <FeaturedGames games={featured.length > 0 ? featured : games} />
-      <BundleSection bundles={featuredBundles} games={games} />
-      <DealsSection deals={activeDeals} />
+      <BundleSection bundles={displayBundles} games={games} />
       <RecentlyAdded games={recentlyAdded} />
+      <DealsSection deals={activeDeals} />
       <ProofSection proofs={proofs} />
       <PromotionBanner />
       <FinalCTA />

@@ -3,7 +3,7 @@
 import { useActionState, useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Loader2, AlertCircle, Search } from "lucide-react";
+import { Loader2, AlertCircle, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MediaUploadField } from "@/components/admin/media-upload-field";
 import { CoverArt } from "@/components/ui/cover-art";
@@ -22,14 +22,41 @@ export function BundleForm({
 }) {
   const router = useRouter();
   const [state, formAction, pending] = useActionState(action, null);
-  const [originalPrice, setOriginalPrice] = useState(bundle?.originalPrice ?? 0);
-  const [bundlePrice, setBundlePrice] = useState(bundle?.bundlePrice ?? 0);
   const [selectedIds, setSelectedIds] = useState<string[]>(bundle?.gameIds ?? []);
   const [query, setQuery] = useState("");
 
+  // ─── Auto-computed originalPrice ───────────────────────────────────────────
+  // Sum the salePrice of every selected game. This is recalculated every time
+  // the game selection changes so the admin never has to type it manually.
+  const computedOriginalPrice = useMemo(() => {
+    return selectedIds.reduce((sum, id) => {
+      const game = games.find((g) => g.id === id);
+      return sum + (game?.salePrice ?? 0);
+    }, 0);
+  }, [selectedIds, games]);
+
+  // bundlePrice is fully editable — it is the discounted price the admin sets.
+  // Seed from the existing bundle on edit; default to the auto-computed sum on
+  // "new bundle" so there is always a sensible starting value in the field.
+  const [bundlePrice, setBundlePrice] = useState(
+    bundle?.bundlePrice ?? computedOriginalPrice
+  );
+
+  // Keep bundlePrice in sync when the game selection changes — but only when
+  // creating a new bundle. For an existing bundle we do not want to clobber
+  // the saved price each time the admin tweaks the game list.
+  const isNew = !bundle;
+  const prevComputedRef = useRef(computedOriginalPrice);
+  useEffect(() => {
+    if (isNew && prevComputedRef.current !== computedOriginalPrice) {
+      prevComputedRef.current = computedOriginalPrice;
+      setBundlePrice(computedOriginalPrice);
+    }
+  }, [isNew, computedOriginalPrice]);
+
   const { savings, discountPercentage } = useMemo(
-    () => calcDiscount(Number(originalPrice) || 0, Number(bundlePrice) || 0),
-    [originalPrice, bundlePrice]
+    () => calcDiscount(computedOriginalPrice, Number(bundlePrice) || 0),
+    [computedOriginalPrice, bundlePrice]
   );
 
   const filteredGames = useMemo(() => {
@@ -40,9 +67,6 @@ export function BundleForm({
 
   const fieldErrors = state?.fieldErrors ?? {};
 
-  // Same pattern as the game form: react to `pending` flipping from true
-  // to false (a submission just finished) rather than reading `state`
-  // synchronously right after dispatching, which would be stale.
   const wasPending = useRef(false);
   useEffect(() => {
     if (wasPending.current && !pending) {
@@ -59,8 +83,17 @@ export function BundleForm({
     setSelectedIds((prev) => (prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]));
   }
 
+  // Selected games enriched with their Game objects for the breakdown table.
+  const selectedGames = useMemo(
+    () => selectedIds.map((id) => games.find((g) => g.id === id)).filter(Boolean) as Game[],
+    [selectedIds, games]
+  );
+
   return (
     <form action={formAction} className="flex flex-col gap-8">
+      {/* Hidden field carries the auto-computed originalPrice to the server */}
+      <input type="hidden" name="originalPrice" value={computedOriginalPrice} />
+
       {state?.error && (
         <div className="flex items-center gap-2 rounded-xl border border-danger/30 bg-danger/10 px-4 py-3 text-sm text-danger">
           <AlertCircle size={16} />
@@ -85,23 +118,28 @@ export function BundleForm({
       </Section>
 
       <Section title="Games in this bundle">
-        {selectedIds.length > 0 && (
+        {/* Selected games chip strip */}
+        {selectedGames.length > 0 && (
           <div className="flex flex-wrap gap-2">
-            {selectedIds.map((id) => {
-              const g = games.find((game) => game.id === id);
-              if (!g) return null;
-              return (
-                <span
-                  key={id}
-                  className="flex items-center gap-1.5 rounded-full border border-accent-cyan/40 bg-accent-cyan/10 py-1 pl-1 pr-2.5 text-xs text-accent-cyan"
-                >
-                  <span className="h-5 w-5 overflow-hidden rounded-full">
-                    <CoverArt title={g.title} genre={g.genre} imageUrl={g.coverImage} fit="contain" />
-                  </span>
-                  {g.title}
+            {selectedGames.map((g) => (
+              <span
+                key={g.id}
+                className="flex items-center gap-1.5 rounded-full border border-accent-cyan/40 bg-accent-cyan/10 py-1 pl-1 pr-2.5 text-xs text-accent-cyan"
+              >
+                <span className="h-5 w-5 overflow-hidden rounded-full">
+                  <CoverArt title={g.title} genre={g.genre} imageUrl={g.coverImage} fit="contain" />
                 </span>
-              );
-            })}
+                {g.title}
+                <button
+                  type="button"
+                  onClick={() => toggleGame(g.id)}
+                  aria-label={`Remove ${g.title}`}
+                  className="ml-0.5 opacity-60 hover:opacity-100"
+                >
+                  <X size={11} />
+                </button>
+              </span>
+            ))}
           </div>
         )}
 
@@ -150,38 +188,71 @@ export function BundleForm({
       </Section>
 
       <Section title="Pricing">
+        {/* ── Auto-computed original price breakdown ──────────────────────── */}
+        <div className="overflow-hidden rounded-xl border border-border-glass bg-surface/60">
+          <div className="border-b border-border-glass bg-white/[0.02] px-4 py-2.5">
+            <p className="text-xs font-semibold uppercase tracking-wider text-text-muted">
+              Included games — original price auto-calculated
+            </p>
+          </div>
+          {selectedGames.length === 0 ? (
+            <p className="px-4 py-4 text-sm text-text-muted">No games selected yet.</p>
+          ) : (
+            <ul>
+              {selectedGames.map((g) => (
+                <li
+                  key={g.id}
+                  className="flex items-center justify-between gap-3 border-b border-border-glass px-4 py-2.5 last:border-0"
+                >
+                  <span className="truncate text-sm text-text-secondary">{g.title}</span>
+                  <span className="shrink-0 text-sm font-medium text-text-primary">
+                    {formatINR(g.salePrice)}
+                  </span>
+                </li>
+              ))}
+            </ul>
+          )}
+          <div className="flex items-center justify-between border-t border-border-glass-strong bg-white/[0.03] px-4 py-3">
+            <span className="text-sm font-semibold text-text-secondary">Total (original price)</span>
+            <span className="text-base font-bold text-accent-cyan">
+              {formatINR(computedOriginalPrice)}
+            </span>
+          </div>
+        </div>
+
+        {/* ── Editable bundle price + read-only original price ────────────── */}
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          <Field label="Original price (₹)" error={fieldErrors.originalPrice} hint="Usually the sum of the included games' prices">
-            <input
-              name="originalPrice"
-              type="number"
-              min={0}
-              step="1"
-              defaultValue={bundle?.originalPrice}
-              onChange={(e) => setOriginalPrice(Number(e.target.value))}
-              required
-              className="input"
-            />
+          <Field label="Original price (₹)" hint="Auto-calculated from selected games">
+            {/* Display-only — the real value is sent via the hidden input above */}
+            <div className="input flex cursor-not-allowed select-none items-center gap-2 opacity-70">
+              <span className="text-text-primary">{formatINR(computedOriginalPrice)}</span>
+              <span className="ml-auto text-xs text-text-muted">auto</span>
+            </div>
           </Field>
-          <Field label="Bundle price (₹)" error={fieldErrors.bundlePrice}>
+
+          <Field label="Bundle price (₹)" error={fieldErrors.bundlePrice} hint="The discounted price you offer">
             <input
               name="bundlePrice"
               type="number"
               min={0}
               step="1"
-              defaultValue={bundle?.bundlePrice}
+              value={bundlePrice}
               onChange={(e) => setBundlePrice(Number(e.target.value))}
               required
               className="input"
             />
           </Field>
         </div>
+
+        {/* ── Live discount preview ────────────────────────────────────────── */}
         <div className="flex items-center gap-6 rounded-xl border border-border-glass bg-surface/60 px-4 py-3 text-sm">
           <span className="text-text-muted">
-            Discount: <span className="font-semibold text-accent-cyan">{discountPercentage}% OFF</span>
+            Discount:{" "}
+            <span className="font-semibold text-accent-cyan">{discountPercentage}% OFF</span>
           </span>
           <span className="text-text-muted">
-            Savings: <span className="font-semibold text-success">{formatINR(savings)}</span>
+            Savings:{" "}
+            <span className="font-semibold text-success">{formatINR(savings)}</span>
           </span>
         </div>
       </Section>
