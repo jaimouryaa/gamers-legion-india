@@ -111,7 +111,7 @@ export function BundleForm({
         <MediaUploadField
           name="bannerImage"
           label="Bundle banner"
-          hint="Optional — placeholder art used if empty"
+          hint="Optional — any ratio supported (16:9, 4:3, square, ultrawide). Placeholder used if empty"
           kind="banners"
           defaultValue={bundle?.bannerImage}
         />

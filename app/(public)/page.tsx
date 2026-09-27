@@ -8,7 +8,6 @@ import { BundleSection } from "@/components/site/bundle-section";
 import { DealsSection } from "@/components/site/deals-section";
 import { RecentlyAdded } from "@/components/site/recently-added";
 import { ProofSection } from "@/components/site/proof-section";
-import { PromotionBanner } from "@/components/site/promotion-banner";
 import { FinalCTA } from "@/components/site/final-cta";
 import { StatsStrip } from "@/components/site/stats-strip";
 
@@ -35,7 +34,6 @@ export default async function HomePage() {
       <RecentlyAdded games={recentlyAdded} />
       <DealsSection deals={activeDeals} />
       <ProofSection proofs={proofs} />
-      <PromotionBanner />
       <FinalCTA />
       <StatsStrip />
     </>

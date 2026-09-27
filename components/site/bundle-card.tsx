@@ -25,11 +25,11 @@ export function BundleCard({ bundle, onOpen }: { bundle: Bundle; onOpen: (bundle
       transition={{ duration: 0.25, ease: "easeOut" }}
       className="arcade-card group glass-panel flex cursor-pointer flex-col overflow-hidden rounded-2xl text-left transition-colors hover:border-accent-violet/40 sm:flex-row"
     >
-      <div className="relative aspect-[16/9] shrink-0 overflow-hidden sm:aspect-auto sm:w-72">
+      <div className="relative aspect-video shrink-0 overflow-hidden bg-black/40 sm:aspect-auto sm:w-72 md:w-80 sm:min-h-[180px]">
         <div className="h-full w-full transition-transform duration-500 group-hover:scale-105">
           <CoverArt title={bundle.name} imageUrl={bundle.bannerImage} fit="contain" />
         </div>
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent sm:bg-gradient-to-r" />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent sm:bg-gradient-to-r" />
         <div className="absolute left-3 top-3 flex items-center gap-1.5 rounded-full bg-black/50 px-2.5 py-1 text-[11px] font-medium text-white backdrop-blur-sm">
           <Layers size={12} />
           {bundle.gameIds.length} games

@@ -60,9 +60,9 @@ export default async function BundleDetailPage({
   return (
     <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
       <div className="glass-panel overflow-hidden rounded-3xl">
-        <div className="relative h-56 sm:h-72">
-          <CoverArt title={bundle.name} imageUrl={bundle.bannerImage} />
-          <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/10 to-transparent" />
+        <div className="relative h-60 overflow-hidden bg-black/40 sm:h-80 md:h-96">
+          <CoverArt title={bundle.name} imageUrl={bundle.bannerImage} fit="contain" />
+          <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-surface via-surface/20 to-transparent" />
         </div>
         <div className="p-6 sm:p-10">
           <div className="flex flex-wrap items-start justify-between gap-4">
@@ -137,7 +137,7 @@ export default async function BundleDetailPage({
                 className="glass-panel flex gap-4 overflow-hidden rounded-2xl p-4 transition-colors hover:border-accent-violet/40"
               >
                 <div className="h-20 w-32 shrink-0 overflow-hidden rounded-xl">
-                  <CoverArt title={b.name} imageUrl={b.bannerImage} />
+                  <CoverArt title={b.name} imageUrl={b.bannerImage} fit="contain" />
                 </div>
                 <div className="flex flex-col justify-center">
                   <p className="font-display text-sm font-semibold text-text-primary">{b.name}</p>

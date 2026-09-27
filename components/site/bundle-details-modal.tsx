@@ -66,9 +66,9 @@ export function BundleDetailsModal({
               <X size={18} />
             </button>
 
-            <div className="relative h-36 shrink-0 sm:h-56">
-              <CoverArt title={bundle.name} imageUrl={bundle.bannerImage} />
-              <div className="absolute inset-0 bg-gradient-to-t from-surface via-surface/40 to-transparent" />
+            <div className="relative h-44 shrink-0 overflow-hidden bg-black/40 sm:h-64 md:h-72">
+              <CoverArt title={bundle.name} imageUrl={bundle.bannerImage} fit="contain" />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-surface via-surface/30 to-transparent" />
             </div>
 
             <div className="overflow-y-auto px-6 pb-6 pt-5 sm:px-8 sm:pb-8">

@@ -118,7 +118,7 @@ export function MediaUploadField({
             <img
               src={url}
               alt=""
-              className="h-32 w-full object-cover"
+              className="max-h-60 w-full object-contain bg-black/40"
               onError={() => setError("Couldn't load the uploaded image preview.")}
             />
           )}
