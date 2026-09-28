@@ -93,7 +93,7 @@ export function GameForm({
         <Field label="Mode" hint="Select all that apply">
           <CheckboxGroup
             name="tags"
-            options={["Multiplayer", "Singleplayer", "Campaign"] as const}
+            options={["Multiplayer", "Singleplayer", "Campaign", "Online", "Offline", "Split Screen"] as const}
             defaultValues={game?.tags ?? []}
           />
         </Field>
