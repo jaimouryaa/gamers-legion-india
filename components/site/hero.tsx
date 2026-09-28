@@ -63,6 +63,28 @@ export function Hero() {
           <motion.p variants={item} className="mt-6 max-w-lg text-base text-text-secondary sm:text-lg">
             {SITE.description}
           </motion.p>
+          <motion.div
+            variants={item}
+            whileHover={{
+              scale: 1.02,
+              boxShadow: "0 0 28px -4px rgba(155,27,48,0.45)",
+              borderColor: "rgba(155,27,48,0.65)",
+              backgroundColor: "rgba(155,27,48,0.10)",
+            }}
+            whileTap={{ scale: 0.985 }}
+            transition={{ type: "spring", stiffness: 300, damping: 24 }}
+            className="mt-5 inline-flex max-w-lg cursor-default items-start gap-3 rounded-xl border border-[#9B1B30]/30 bg-[#9B1B30]/8 px-4 py-3"
+          >
+            <motion.span
+              className="mt-0.5 shrink-0 text-[#C4354F]"
+              whileHover={{ rotate: 180, scale: 1.3 }}
+              transition={{ duration: 0.35, ease: "easeOut" }}
+            >✦</motion.span>
+            <p className="text-sm leading-relaxed text-text-secondary">
+              <span className="font-semibold text-[#C4354F]">Game Not Listed? We&apos;ve Got You.</span>{" "}
+              Just drop us a message with the game you want. If it&apos;s playable on PC, we&apos;ll source it and set it up for you on demand.
+            </p>
+          </motion.div>
           <motion.div variants={item} className="mt-9 flex flex-wrap items-center gap-3">
             <LinkButton href="/games" size="lg" className="arcade-cta">
               Explore games
