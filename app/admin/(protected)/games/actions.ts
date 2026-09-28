@@ -17,7 +17,8 @@ function parseFormData(formData: FormData) {
     coverImage: String(formData.get("coverImage") ?? ""),
     bannerImage: String(formData.get("bannerImage") ?? ""),
     genre: formData.getAll("genre").map(String),
-    platforms: formData.getAll("platforms").map(String),
+    // Always PC — hidden input in the form sends "PC" but we enforce it here too.
+    platforms: ["PC"],
     originalPrice: formData.get("originalPrice"),
     salePrice: formData.get("salePrice"),
     rating: formData.get("rating") || undefined,
@@ -26,10 +27,8 @@ function parseFormData(formData: FormData) {
     dealExpiry: String(formData.get("dealExpiry") ?? ""),
     featured: formData.get("featured") === "on",
     status: String(formData.get("status") ?? "draft") as GameStatus,
-    tags: String(formData.get("tags") ?? "")
-      .split(",")
-      .map((t) => t.trim())
-      .filter(Boolean),
+    // Tags now come from individual checkboxes (Multiplayer / Singleplayer / Campaign).
+    tags: formData.getAll("tags").map(String).filter(Boolean),
   };
 }
 

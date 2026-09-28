@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { Loader2, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MediaUploadField } from "@/components/admin/media-upload-field";
-import { GENRES, PLATFORMS, type Game } from "@/lib/types";
+import { GENRES, type Game } from "@/lib/types";
 import { calcDiscount, formatINR } from "@/lib/utils";
 import type { FormState } from "@/app/admin/(protected)/games/actions";
 
@@ -85,14 +85,17 @@ export function GameForm({
       </Section>
 
       <Section title="Classification">
+        {/* PC is our only platform — hardcoded, not shown to the admin */}
+        <input type="hidden" name="platforms" value="PC" />
         <Field label="Genres" error={fieldErrors.genre}>
           <CheckboxGroup name="genre" options={GENRES} defaultValues={game?.genre ?? []} />
         </Field>
-        <Field label="Platforms" error={fieldErrors.platforms}>
-          <CheckboxGroup name="platforms" options={PLATFORMS} defaultValues={game?.platforms ?? []} />
-        </Field>
-        <Field label="Tags" hint="Comma separated, e.g. open-world, co-op">
-          <input name="tags" defaultValue={game?.tags?.join(", ") ?? ""} className="input" />
+        <Field label="Mode" hint="Select all that apply">
+          <CheckboxGroup
+            name="tags"
+            options={["Multiplayer", "Singleplayer", "Campaign"] as const}
+            defaultValues={game?.tags ?? []}
+          />
         </Field>
       </Section>
 
