@@ -24,7 +24,9 @@ const fragmentShader = /* glsl */ `
     float result = texture2D(iChannel0, uv * 1.1 + vec2(iTime * -0.005)).r;
     result *= texture2D(iChannel0, uv * 0.9 + vec2(iTime * 0.005)).g;
     result = pow(result, 12.0);
-    gl_FragColor = vec4(vec3(1.0, 0.9, 0.8) * result * uIntensity, 1.0);
+    vec3 col = min(vec3(1.0, 0.9, 0.8) * result * uIntensity, 1.0);
+    // Premultiplied alpha: sparkles add light, everything else stays transparent.
+    gl_FragColor = vec4(col, max(col.r, max(col.g, col.b)));
   }
 `;
 
@@ -115,13 +117,13 @@ export function GlitterFinal({
 }: GlitterProps) {
   return (
     <div
-      className={`pointer-events-none absolute inset-0 mix-blend-screen ${className}`}
+      className={`pointer-events-none absolute inset-0 ${className}`}
       aria-hidden
     >
       <Canvas
         frameloop={still ? "demand" : "always"}
-        dpr={[1, mobile ? 1 : 1.5]}
-        gl={{ powerPreference: "high-performance", antialias: false }}
+        dpr={1}
+        gl={{ alpha: true, antialias: false, depth: false, stencil: false, powerPreference: "high-performance" }}
       >
         <SparklesPlane
           speed={mobile ? speed * 0.65 : speed}

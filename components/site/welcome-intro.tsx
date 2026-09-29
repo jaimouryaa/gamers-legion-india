@@ -97,7 +97,7 @@ export default function WelcomeIntro() {
       {/* Faded logo: the middle band is masked so it never collides with the title */}
       <motion.div
         aria-hidden
-        className="pointer-events-none absolute left-1/2 top-1/2 aspect-square w-[min(100vmin,1000px)] -translate-x-1/2 -translate-y-1/2 mix-blend-screen"
+        className="pointer-events-none absolute left-1/2 top-1/2 aspect-square w-[min(100vmin,1000px)] -translate-x-1/2 -translate-y-1/2"
         style={{ maskImage: logoMask, WebkitMaskImage: logoMask }}
         initial={reduce ? false : { opacity: 0, scale: 1.06 }}
         animate={{ opacity: 0.32, scale: 1 }}
@@ -111,9 +111,9 @@ export default function WelcomeIntro() {
       {/* Slow burgundy glow */}
       <motion.div
         aria-hidden
-        className="absolute aspect-square w-[min(90vw,900px)] rounded-full blur-[30px]"
+        className="absolute aspect-square w-[min(90vw,900px)] rounded-full"
         style={{ background: "radial-gradient(closest-side, rgba(140,20,40,.42), transparent)" }}
-        animate={reduce ? undefined : { opacity: [1, 0.55, 1], scale: [1, 1.08, 1] }}
+        animate={reduce ? undefined : { opacity: [1, 0.6, 1] }}
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
       />
 
