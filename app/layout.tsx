@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Chakra_Petch, Inter } from "next/font/google";
 import { Toaster } from "sonner";
+ import WelcomeIntro from "@/components/site/welcome-intro";
 import "./globals.css";
 
 const chakra = Chakra_Petch({
@@ -44,6 +45,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${chakra.variable} ${inter.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-void" suppressHydrationWarning>
+        <WelcomeIntro />  
         {children}
         <Toaster
           theme="system"
