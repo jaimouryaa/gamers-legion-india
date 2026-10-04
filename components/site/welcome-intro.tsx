@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import Image from "next/image";
 import { motion } from "framer-motion";
@@ -15,7 +15,7 @@ const Glitter = dynamic(
 );
 
 const SEEN_KEY = "gamers-legion-welcome-seen";
-const FADE_MS = 1000;
+const LEAVE_MS = 900;
 
 const logoMask =
   "linear-gradient(to bottom, #000 0, #000 33%, transparent 41%, transparent 63%, #000 71%, #000 100%)";
@@ -34,7 +34,7 @@ export default function WelcomeIntro() {
   const [webgl, setWebgl] = useState(false);
   const [mobile, setMobile] = useState(false);
   const [reduce, setReduce] = useState(false);
-  const enterRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     try {
@@ -48,6 +48,16 @@ export default function WelcomeIntro() {
     setReduce(window.matchMedia("(prefers-reduced-motion: reduce)").matches);
   }, []);
 
+  // Slide the intro up and reveal the site underneath.
+  const enter = useCallback(() => {
+    if (phase !== "show") return;
+    try {
+      sessionStorage.setItem(SEEN_KEY, "1");
+    } catch {}
+    setPhase("leaving");
+    setTimeout(() => setPhase("done"), reduce ? 0 : LEAVE_MS + 50);
+  }, [phase, reduce]);
+
   // Lock page scroll while the intro is on screen.
   useEffect(() => {
     if (phase === "done") return;
@@ -59,21 +69,42 @@ export default function WelcomeIntro() {
     };
   }, [phase]);
 
-  // Focus the button once it has appeared.
+  // Put focus on the intro so keyboard users can dismiss it right away.
+  useEffect(() => {
+    if (phase === "show") dialogRef.current?.focus({ preventScroll: true });
+  }, [phase]);
+
+  // Scrolling down (wheel, swipe up, arrow/page/Enter/Space keys) lifts the intro away.
   useEffect(() => {
     if (phase !== "show") return;
-    const t = setTimeout(() => enterRef.current?.focus({ preventScroll: true }), reduce ? 100 : 1700);
-    return () => clearTimeout(t);
-  }, [phase, reduce]);
+    const armedAt = Date.now() + 600; // ignore leftover scroll momentum
+    const armed = () => Date.now() > armedAt;
+    let startY = 0;
 
-  const enter = () => {
-    if (phase !== "show") return;
-    try {
-      sessionStorage.setItem(SEEN_KEY, "1");
-    } catch {}
-    setPhase("leaving");
-    setTimeout(() => setPhase("done"), reduce ? 0 : FADE_MS + 50);
-  };
+    const onWheel = (e: WheelEvent) => {
+      if (e.deltaY > 8 && armed()) enter();
+    };
+    const onTouchStart = (e: TouchEvent) => {
+      startY = e.touches[0].clientY;
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      if (startY - e.touches[0].clientY > 40 && armed()) enter();
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (["ArrowDown", "PageDown", "End", "Enter", " "].includes(e.key) && armed()) enter();
+    };
+
+    window.addEventListener("wheel", onWheel, { passive: true });
+    window.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: true });
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("wheel", onWheel);
+      window.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [phase, enter]);
 
   if (phase === "done") return null;
 
@@ -81,14 +112,18 @@ export default function WelcomeIntro() {
 
   return (
     <div
+      ref={dialogRef}
+      tabIndex={-1}
       role="dialog"
       aria-modal="true"
       aria-label="Welcome to Gamers Legion India"
-      className={`fixed inset-0 z-[100] flex items-center justify-center overflow-hidden px-6 text-center transition-opacity motion-reduce:transition-none ${
-        leaving ? "pointer-events-none opacity-0" : "opacity-100"
+      className={`fixed inset-0 z-[100] flex items-center justify-center overflow-hidden px-6 outline-none text-center transition-transform motion-reduce:transition-none ${
+        leaving ? "pointer-events-none -translate-y-full" : "translate-y-0"
       }`}
       style={{
-        transitionDuration: `${FADE_MS}ms`,
+        transitionDuration: `${LEAVE_MS}ms`,
+        transitionTimingFunction: "cubic-bezier(0.76, 0, 0.24, 1)",
+        touchAction: "none",
         background: webgl
           ? "radial-gradient(70% 55% at 50% 50%, #1c0810 0%, #0b0507 75%)"
           : "radial-gradient(60% 50% at 50% 50%, #3a0b17 0%, #0b0507 75%)",
@@ -117,30 +152,56 @@ export default function WelcomeIntro() {
         transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
       />
 
-      <div className="relative flex max-w-[1100px] flex-col items-center gap-8 font-[family-name:var(--font-chakra)]">
-        <motion.h1
-          className="text-balance text-4xl font-bold leading-none tracking-[0.04em] text-[#dc3348] sm:text-5xl md:text-6xl lg:text-7xl"
-          style={{ textShadow: "0 0 40px rgba(140,20,40,.55)" }}
-          initial={reduce ? false : { opacity: 0, y: 18, scale: 0.96 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.7, delay: 0.5, ease: [0.2, 0.7, 0.2, 1] }}
+      <div className="relative flex flex-col items-center">
+        <h1 className="m-0">
+          <span className="sr-only">Gamers Legion India</span>
+          <motion.div
+            aria-hidden
+            initial={reduce ? false : { opacity: 0, scale: 0.96, clipPath: "inset(0 100% 0 0)" }}
+            animate={{ opacity: 1, scale: 1, clipPath: "inset(0 0% 0 0)" }}
+            transition={{ duration: 1, delay: 0.5, ease: [0.2, 0.7, 0.2, 1] }}
+          >
+            <Image
+              src="/gl-wordmark.webp"
+              alt=""
+              width={1094}
+              height={192}
+              priority
+              sizes="(max-width: 900px) 88vw, 820px"
+              className="h-auto w-[min(88vw,820px)]"
+            />
+          </motion.div>
+        </h1>
+        <motion.div
+          className="mt-4"
+          initial={reduce ? false : { opacity: 0, y: 12, clipPath: "inset(0 100% 0 0)" }}
+          animate={{ opacity: 0.7, y: 0, clipPath: "inset(0 0% 0 0)" }}
+          transition={{ duration: 0.9, delay: 1.4, ease: [0.2, 0.7, 0.2, 1] }}
         >
-          GAMERS LEGION INDIA
-        </motion.h1>
-
-        <motion.button
-          ref={enterRef}
-          type="button"
-          onClick={enter}
-          aria-label="Enter Gamers Legion India"
-          className="border border-[#f5ebdd] px-11 py-3.5 text-base font-bold tracking-[0.3em] text-[#f5ebdd] transition-colors hover:border-[#dc3348] hover:bg-[#dc3348] focus-visible:outline focus-visible:outline-[3px] focus-visible:outline-offset-4 focus-visible:outline-[#f5ebdd]"
-          initial={reduce ? false : { opacity: 0, y: 8 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 1.2 }}
-        >
-          ENTER
-        </motion.button>
+          <Image
+            src="/gl-tagline.webp"
+            alt="Join the Legion"
+            width={1146}
+            height={198}
+            sizes="(max-width: 900px) 27vw, 246px"
+            className="h-auto w-[calc(min(88vw,820px)*0.3)]"
+          />
+        </motion.div>
+        <p className="sr-only">Scroll down or press Enter to continue.</p>
       </div>
+
+      {/* Quiet cue that the screen scrolls away (not a button) */}
+      <motion.span
+        aria-hidden
+        className="pointer-events-none absolute bottom-8 left-1/2 h-9 w-px -translate-x-1/2 origin-top bg-[#f5ebdd]/60"
+        initial={reduce ? false : { opacity: 0, scaleY: 0 }}
+        animate={reduce ? { opacity: 0.6 } : { opacity: [0, 0.7, 0.7, 0], scaleY: [0, 1, 1, 1] }}
+        transition={
+          reduce
+            ? undefined
+            : { duration: 2.2, delay: 1.8, repeat: Infinity, repeatDelay: 0.4, ease: "easeInOut" }
+        }
+      />
     </div>
   );
 }

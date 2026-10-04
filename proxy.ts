@@ -11,6 +11,6 @@ export const config = {
      * Match all request paths except static files and images,
      * so the auth cookie stays fresh across the whole app.
      */
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ttf|otf|woff|woff2)$).*)",
   ],
 };
