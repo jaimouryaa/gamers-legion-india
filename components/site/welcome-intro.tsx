@@ -172,21 +172,6 @@ export default function WelcomeIntro() {
             />
           </motion.div>
         </h1>
-        <motion.div
-          className="mt-4"
-          initial={reduce ? false : { opacity: 0, y: 12, clipPath: "inset(0 100% 0 0)" }}
-          animate={{ opacity: 0.7, y: 0, clipPath: "inset(0 0% 0 0)" }}
-          transition={{ duration: 0.9, delay: 1.4, ease: [0.2, 0.7, 0.2, 1] }}
-        >
-          <Image
-            src="/gl-tagline.webp"
-            alt="Join the Legion"
-            width={1146}
-            height={198}
-            sizes="(max-width: 900px) 27vw, 246px"
-            className="h-auto w-[calc(min(88vw,820px)*0.3)]"
-          />
-        </motion.div>
         <p className="sr-only">Scroll down or press Enter to continue.</p>
       </div>
 
