@@ -9,7 +9,7 @@ import Link from "next/link";
 import { formatINR, ogImageFor } from "@/lib/utils";
 import { GameGrid } from "@/components/site/game-grid";
 import { GameDetailActions } from "@/components/site/game-detail-actions";
-import { ActivationGuide } from "@/components/site/activation-guide";
+import { CloseOnOutsideClick } from "@/components/site/close-on-outside-click";
 
 export async function generateMetadata({
   params,
@@ -52,7 +52,9 @@ export default async function GameDetailPage({
     .slice(0, 4);
 
   return (
-    <div className="mx-auto max-w-5xl px-4 py-12 sm:px-6 lg:px-8">
+    <>
+      <CloseOnOutsideClick className="px-4 py-12 sm:px-6 lg:px-8">
+        <div data-keep-open className="mx-auto max-w-5xl">
       <div className="glass-panel overflow-hidden rounded-3xl">
         <div className="relative h-56 sm:h-72">
           <CoverArt title={game.title} genre={game.genre} imageUrl={game.bannerImage ?? game.coverImage} />
@@ -97,25 +99,25 @@ export default async function GameDetailPage({
           </div>
 
           <div className="mt-8">
-            <h2 className="mb-3 font-display text-sm font-semibold uppercase tracking-wider text-text-muted">
-              How to activate
-            </h2>
-            <ActivationGuide platforms={game.platforms} defaultOpen={game.platforms.length === 1} />
-            <Link href="/proof" className="mt-3 inline-block text-xs font-medium text-accent-cyan hover:underline">
+            <Link href="/proof" className="inline-block text-xs font-medium text-accent-cyan hover:underline">
               See game activation & delivery proof →
             </Link>
           </div>
         </div>
       </div>
+        </div>
+      </CloseOnOutsideClick>
 
       {related.length > 0 && (
-        <div className="mt-14">
+        <div className="mx-auto max-w-5xl px-4 pb-12 sm:px-6 lg:px-8">
+        <div className="mt-2">
           <h2 className="mb-6 font-display text-xl font-semibold text-text-primary">
             Related games
           </h2>
           <GameGrid games={related} />
         </div>
+        </div>
       )}
-    </div>
+    </>
   );
 }

@@ -2,6 +2,7 @@ import { getPublicGames, getFeaturedGames, getActiveDeals } from "@/lib/queries/
 import { getPublicBundles } from "@/lib/queries/bundles";
 import { getPublishedProofs } from "@/lib/queries/proofs";
 import { Hero } from "@/components/site/hero";
+import { GameHero } from "@/components/hero/game-hero";
 import { FeatureStrip } from "@/components/site/feature-strip";
 import { FeaturedGames } from "@/components/site/featured-games";
 import { BundleSection } from "@/components/site/bundle-section";
@@ -24,10 +25,11 @@ export default async function HomePage() {
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
   const activeDeals = getActiveDeals(games);
+  const heroGames = (featured.length > 0 ? featured : games).filter((g) => g.slug).slice(0, 10);
 
   return (
     <>
-      <Hero />
+      {heroGames.length >= 3 ? <GameHero games={heroGames} /> : <Hero />}
       <FeatureStrip />
       <FeaturedGames games={featured.length > 0 ? featured : games} />
       <BundleSection bundles={displayBundles} games={games} />
