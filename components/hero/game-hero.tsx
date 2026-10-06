@@ -1,22 +1,17 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
-import Link from "next/link";
+import Image from "next/image";
+import { useMemo, useRef } from "react";
 import { ArrowRight } from "lucide-react";
 import { LinkButton } from "@/components/ui/button";
-import { Price } from "@/components/ui/price";
+import { EarthBlaze } from "@/components/ui/earth-blaze";
 import { GameWheel, type GameWheelHandle, type GameWheelItem } from "@/components/ui/game-wheel";
 import { SITE } from "@/lib/config";
-import { cn } from "@/lib/utils";
 import type { Game } from "@/lib/types";
-
-const pad = (n: number) => String(n).padStart(2, "0");
 
 export function GameHero({ games }: { games: Game[] }) {
   const wheel = useRef<GameWheelHandle>(null);
-  const [active, setActive] = useState(0);
 
-  // Covers link to the existing /games/[slug] page for each game.
   const items = useMemo<GameWheelItem[]>(
     () =>
       games.map((g) => ({
@@ -28,95 +23,123 @@ export function GameHero({ games }: { games: Game[] }) {
       })),
     [games],
   );
-  const game = games[active] ?? games[0];
 
   return (
     <section
       aria-label="Featured games"
-      className="relative overflow-hidden border-b border-border-glass bg-void"
+      className="relative min-h-svh overflow-hidden border-b border-border-glass"
     >
-      {/* Very soft burgundy glow behind the wheel */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute left-1/2 top-[55%] h-[26rem] w-[26rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent-primary/10 blur-[120px] lg:left-auto lg:right-[8%] lg:top-1/2"
+      {/* ── EarthBlaze full-screen background ── */}
+      <EarthBlaze
+        interactive
+        auroraEnabled
+        starCount={1800}
+        illumination={1.1}
+        surfaceBrightness={1.2}
+        style={{
+          position: "absolute",
+          inset: 0,
+          width: "100%",
+          height: "100%",
+          aspectRatio: "auto",
+          zIndex: 0,
+        }}
       />
 
-      <div className="relative mx-auto grid min-h-[calc(100svh-4rem)] max-w-7xl gap-x-10 gap-y-6 px-4 py-10 sm:px-6 lg:grid-cols-[1.05fr_1fr] lg:grid-rows-[1fr_auto_auto] lg:px-8 lg:py-12">
-        {/* Copy */}
-        <div className="order-1 lg:col-start-1 lg:row-start-1 lg:self-end">
-          <p className="mb-4 text-xs font-semibold tracking-[0.25em] text-accent-primary">
-            {SITE.name.toUpperCase()}
-          </p>
-          <h1 className="font-display text-[clamp(2.5rem,7vw,5.25rem)] font-bold leading-[0.98] tracking-tight text-text-primary">
-            <span className="block">DISCOVER</span>
-            <span className="block">YOUR NEXT</span>
-            <span className="block">
-              GAME<span className="text-accent-primary">.</span>
-            </span>
-          </h1>
-          <p className="mt-5 max-w-md text-base text-text-secondary sm:text-lg">
-            Explore games across every genre, platform and world.
-          </p>
-        </div>
+      {/* Left-to-right gradient — keeps copy readable without hiding the Earth */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-0 z-[1]"
+        style={{
+          background:
+            "linear-gradient(to right, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.60) 42%, rgba(0,0,0,0.12) 72%, transparent 100%)",
+        }}
+      />
+      {/* Bottom fade into next section */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute bottom-0 left-0 right-0 z-[1] h-32"
+        style={{
+          background: "linear-gradient(to top, var(--void, #000) 0%, transparent 100%)",
+        }}
+      />
 
-        {/* Wheel */}
-        <div className="relative order-2 h-[52svh] min-h-[340px] lg:col-start-2 lg:row-span-3 lg:row-start-1 lg:h-[min(80svh,760px)] lg:self-center">
-          <GameWheel ref={wheel} items={items} onActiveChange={setActive} className="h-full w-full" />
+      {/* GL logo watermark — screen blend so only the red glow bleeds through the Earth */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute z-[2]"
+        style={{
+          right: "5%",
+          top: "50%",
+          transform: "translateY(-50%)",
+          width: "min(44vw, 500px)",
+          height: "min(44vw, 500px)",
+          opacity: 0.11,
+          mixBlendMode: "screen",
+        }}
+      >
+        <Image
+          src="/gl-logo.webp"
+          alt=""
+          fill
+          className="object-contain"
+        />
+      </div>
 
-          {/* Index: outside the covers, desktop only */}
-          <ol className="absolute right-1 top-1/2 hidden -translate-y-1/2 flex-col gap-1.5 xl:flex">
-            {games.map((g, i) => (
-              <li key={g.id}>
-                <button
-                  type="button"
-                  onClick={() => wheel.current?.goTo(i)}
-                  aria-current={i === active}
-                  className={cn(
-                    "flex max-w-[9.5rem] items-center gap-2 truncate text-left text-[11px] tracking-wide transition-colors",
-                    i === active ? "font-semibold text-accent-primary" : "text-text-muted hover:text-text-secondary",
-                  )}
-                >
-                  <span className="tabular-nums">{pad(i + 1)}</span>
-                  <span className="truncate uppercase">{g.title}</span>
-                </button>
-              </li>
-            ))}
-          </ol>
-        </div>
+      {/* ── Main content ── */}
+      <div className="relative z-[3] mx-auto flex min-h-svh max-w-7xl flex-col justify-center px-4 sm:px-6 lg:px-8">
+        <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
 
-        {/* Active game info: always outside the cover */}
-        <div className="order-3 lg:col-start-1 lg:row-start-3" aria-live="polite">
-          <p className="mb-2 text-xs tabular-nums tracking-[0.2em] text-text-muted lg:hidden">
-            {pad(active + 1)} / {pad(games.length)}
-          </p>
-          {game && (
-            <div className="flex flex-col gap-1">
-              <p className="font-display text-xl font-semibold text-text-primary">{game.title}</p>
-              <p className="text-sm text-text-muted">
-                {[...game.genre.slice(0, 2), ...game.platforms.slice(0, 2)].join(" · ")}
-              </p>
-              <div className="mt-1 flex items-center gap-4">
-                <Price original={game.originalPrice} sale={game.salePrice} />
-                <Link
-                  href={`/games/${game.slug}`}
-                  className="inline-flex items-center gap-1 text-sm font-medium text-accent-primary hover:underline"
-                >
-                  View game <ArrowRight size={14} />
-                </Link>
-              </div>
+          {/* ── Left column: copy + CTAs ── */}
+          <div className="flex flex-col items-start justify-center py-16 lg:py-24">
+
+            {/* Logo + brand name */}
+            <div className="mb-6 flex items-center gap-3">
+              <Image
+                src="/gl-logo.webp"
+                alt="Gamers Legion India logo"
+                width={44}
+                height={44}
+                className="h-10 w-10 object-contain drop-shadow-lg"
+                priority
+              />
+              <span className="text-sm font-bold tracking-[0.28em] uppercase text-white/80">
+                {SITE.name}
+              </span>
             </div>
-          )}
-        </div>
 
-        {/* CTAs */}
-        <div className="order-4 flex flex-wrap items-center gap-3 lg:col-start-1 lg:row-start-2 lg:self-start">
-          <LinkButton href="/games" size="lg" className="arcade-cta">
-            Explore Games
-            <ArrowRight size={18} />
-          </LinkButton>
-          <LinkButton href="/deals" variant="secondary" size="lg">
-            View Deals
-          </LinkButton>
+            {/* Headline */}
+            <h1 className="font-display text-[clamp(3.25rem,9vw,6.5rem)] font-bold leading-[0.93] tracking-tight text-white">
+              <span className="block">JOIN THE</span>
+              <span className="block text-accent-primary">LEGION.</span>
+            </h1>
+
+            {/* Sub-copy */}
+            <p className="mt-6 max-w-sm text-lg leading-relaxed text-white/70 sm:text-xl">
+              Explore games across every genre, platform and world.
+            </p>
+
+            {/* CTA buttons */}
+            <div className="mt-9 flex flex-wrap items-center gap-3">
+              <LinkButton href="/games" size="lg" className="arcade-cta">
+                Explore Games
+                <ArrowRight size={18} />
+              </LinkButton>
+              <LinkButton href="/deals" variant="secondary" size="lg">
+                View Deals
+              </LinkButton>
+            </div>
+
+          </div>
+
+          {/* ── Right column: Game Wheel only, no list ── */}
+          <div className="flex h-[55svh] items-center justify-center lg:h-[min(78svh,740px)]">
+            <GameWheel
+              ref={wheel}
+              items={items}
+              className="h-full w-full"
+            />
+          </div>
         </div>
       </div>
     </section>

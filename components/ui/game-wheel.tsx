@@ -45,7 +45,7 @@ export const GameWheel = forwardRef<GameWheelHandle, GameWheelProps>(function Ga
   const glowRefs = useRef<(HTMLSpanElement | null)[]>([]);
   const suppressClick = useRef(false);
   const activeCb = useRef(onActiveChange);
-  const api = useRef({ goTo: (_i: number) => {}, step: (_d: number) => {}, active: () => 0 });
+  const api = useRef<{ goTo: (i: number) => void; step: (d: number) => void; active: () => number }>({ goTo: (_i) => {}, step: (_d) => {}, active: () => 0 });
   const n = items.length;
 
   useEffect(() => {
@@ -145,7 +145,7 @@ export const GameWheel = forwardRef<GameWheelHandle, GameWheelProps>(function Ga
         st.target = Math.round(st.target) + d;
         kick();
       },
-      active: () => (st.active < 0 ? 0 : st.active),
+      active: () => (st.active < 0 ? 0 : st.active) as number,
     };
 
     // Mouse wheel (only while the pointer is over the wheel).

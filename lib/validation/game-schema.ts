@@ -16,6 +16,7 @@ export const gameFormSchema = z
     releaseDate: z.string().optional().or(z.literal("")),
     dealExpiry: z.string().optional().or(z.literal("")),
     featured: z.boolean(),
+    showInHero: z.boolean(),
     status: z.enum(["active", "draft", "archived", "expired"]),
     tags: z.array(z.string()).optional(),
   })

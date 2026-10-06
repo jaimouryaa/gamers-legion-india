@@ -23,6 +23,7 @@ export function mapGameRow(row: Record<string, unknown>): Game {
     releaseDate: (row.release_date as string) ?? null,
     dealExpiry: (row.deal_expiry as string) ?? null,
     featured: Boolean(row.featured),
+    showInHero: Boolean(row.show_in_hero),
     status: row.status as Game["status"],
     tags: (row.tags as string[]) ?? [],
     createdAt: row.created_at as string,

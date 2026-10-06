@@ -1,4 +1,4 @@
-import { getPublicGames, getFeaturedGames, getActiveDeals } from "@/lib/queries/games";
+import { getPublicGames, getFeaturedGames, getActiveDeals, getHeroGames } from "@/lib/queries/games";
 import { getPublicBundles } from "@/lib/queries/bundles";
 import { getPublishedProofs } from "@/lib/queries/proofs";
 import { Hero } from "@/components/site/hero";
@@ -13,11 +13,12 @@ import { FinalCTA } from "@/components/site/final-cta";
 import { StatsStrip } from "@/components/site/stats-strip";
 
 export default async function HomePage() {
-  const [games, featured, allBundles, proofs] = await Promise.all([
+  const [games, featured, allBundles, proofs, heroGames] = await Promise.all([
     getPublicGames(),
     getFeaturedGames(),
     getPublicBundles(),
     getPublishedProofs(),
+    getHeroGames(),
   ]);
   const featuredBundles = allBundles.filter((b) => b.featured);
   const displayBundles = featuredBundles.length > 0 ? featuredBundles : allBundles;
@@ -25,7 +26,6 @@ export default async function HomePage() {
     (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
   );
   const activeDeals = getActiveDeals(games);
-  const heroGames = (featured.length > 0 ? featured : games).filter((g) => g.slug).slice(0, 10);
 
   return (
     <>

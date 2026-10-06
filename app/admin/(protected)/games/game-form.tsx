@@ -165,10 +165,16 @@ export function GameForm({
               <option value="expired">Expired</option>
             </select>
           </Field>
-          <label className="flex items-center gap-2.5 self-end pb-2.5 text-sm text-text-secondary">
-            <input type="checkbox" name="featured" defaultChecked={game?.featured} className="h-4 w-4 accent-accent-cyan" />
-            Featured on homepage
-          </label>
+          <div className="flex flex-col gap-3 self-end pb-2.5">
+            <label className="flex items-center gap-2.5 text-sm text-text-secondary">
+              <input type="checkbox" name="featured" defaultChecked={game?.featured} className="h-4 w-4 accent-accent-cyan" />
+              Featured on homepage
+            </label>
+            <label className="flex items-center gap-2.5 text-sm text-text-secondary">
+              <input type="checkbox" name="showInHero" defaultChecked={game?.showInHero} className="h-4 w-4 accent-accent-cyan" />
+              Show in hero wheel
+            </label>
+          </div>
         </div>
       </Section>
 

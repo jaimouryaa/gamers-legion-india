@@ -37,6 +37,20 @@ export async function getFeaturedGames(): Promise<Game[]> {
   return games.filter((g) => g.featured);
 }
 
+/**
+ * Games selected by the admin to appear in the hero wheel.
+ * Falls back to featured games, then to all active games, so the
+ * hero never shows empty.
+ */
+export async function getHeroGames(): Promise<Game[]> {
+  const games = await getPublicGames();
+  const heroGames = games.filter((g) => g.showInHero && g.slug);
+  if (heroGames.length >= 3) return heroGames;
+  const featured = games.filter((g) => g.featured && g.slug);
+  if (featured.length >= 3) return featured;
+  return games.filter((g) => g.slug);
+}
+
 export async function getGameBySlug(slug: string): Promise<Game | null> {
   const games = await getPublicGames();
   return games.find((g) => g.slug === slug) ?? null;

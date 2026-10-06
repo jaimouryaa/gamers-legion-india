@@ -19,6 +19,7 @@ export interface Game {
   releaseDate: string | null;
   dealExpiry: string | null;
   featured: boolean;
+  showInHero: boolean;
   status: GameStatus;
   tags: string[];
   createdAt: string;

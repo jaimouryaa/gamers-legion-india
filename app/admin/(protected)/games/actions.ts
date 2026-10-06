@@ -26,6 +26,7 @@ function parseFormData(formData: FormData) {
     releaseDate: String(formData.get("releaseDate") ?? ""),
     dealExpiry: String(formData.get("dealExpiry") ?? ""),
     featured: formData.get("featured") === "on",
+    showInHero: formData.get("showInHero") === "on",
     status: String(formData.get("status") ?? "draft") as GameStatus,
     // Tags now come from individual checkboxes (Multiplayer / Singleplayer / Campaign).
     tags: formData.getAll("tags").map(String).filter(Boolean),
@@ -68,6 +69,7 @@ export async function createGameAction(_prev: FormState, formData: FormData): Pr
     release_date: data.releaseDate || null,
     deal_expiry: data.dealExpiry || null,
     featured: data.featured,
+    show_in_hero: data.showInHero,
     status: data.status,
     tags: data.tags ?? [],
   });
@@ -119,6 +121,7 @@ export async function updateGameAction(
       release_date: data.releaseDate || null,
       deal_expiry: data.dealExpiry || null,
       featured: data.featured,
+      show_in_hero: data.showInHero,
       status: data.status,
       tags: data.tags ?? [],
     })
