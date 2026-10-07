@@ -1,6 +1,21 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      // Supabase Storage (project-specific bucket URLs)
+      {
+        protocol: "https",
+        hostname: "pnhqmtahkolwmzqcfuok.supabase.co",
+        pathname: "/storage/v1/object/public/**",
+      },
+      // Allow any https image as a catch-all for externally-linked covers
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+    ],
+  },
   experimental: {
     serverActions: {
       // Media uploads (game cover/banner images and videos) go directly

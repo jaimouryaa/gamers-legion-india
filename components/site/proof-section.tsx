@@ -22,7 +22,7 @@ export function ProofSection({ proofs }: { proofs: Proof[] }) {
         {proofs.slice(0, 4).map((proof, i) => (
           <ArcadeReveal key={proof.id} delay={i * 0.08}>
           <div className="arcade-card glass-panel overflow-hidden rounded-xl sm:rounded-2xl">
-            <div className="relative aspect-video">
+            <div className="relative aspect-square">
               <CoverArt title={proof.caption ?? "Delivery proof"} imageUrl={proof.imageUrl} fit="contain" />
             </div>
             {(proof.caption || proof.gameTitle) && (

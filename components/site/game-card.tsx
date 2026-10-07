@@ -37,7 +37,7 @@ export function GameCard({ game, onOpen }: { game: Game; onOpen: (game: Game) =>
       transition={{ duration: 0.25, ease: "easeOut" }}
       className="arcade-card group glass-panel flex h-full min-w-0 cursor-pointer flex-col overflow-hidden rounded-xl text-left transition-colors hover:border-accent-cyan/40 sm:rounded-2xl"
     >
-      <div className="relative aspect-[4/3] overflow-hidden">
+      <div className="relative aspect-square overflow-hidden">
         <div className="h-full w-full transition-transform duration-500 group-hover:scale-110">
           <CoverArt title={game.title} genre={game.genre} imageUrl={game.coverImage} />
         </div>

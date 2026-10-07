@@ -29,7 +29,7 @@ interface GameWheelProps {
 // Geometry (tuned for portrait covers)
 const STEP = 24; // degrees between neighbouring covers
 const MAX_ANGLE = 72; // covers beyond this are hidden
-const CARD_RATIO = 0.67; // width / height
+const CARD_RATIO = 1.0; // width / height  (1:1 square covers)
 const PERSPECTIVE = 1800;
 
 const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));

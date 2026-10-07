@@ -53,7 +53,7 @@ export function GameGridSkeleton({ count = 8 }: { count?: number }) {
     <div className={GRID_CLASSES}>
       {Array.from({ length: count }).map((_, i) => (
         <div key={i} className="glass-panel overflow-hidden rounded-xl sm:rounded-2xl">
-          <div className="aspect-[4/3] animate-pulse bg-white/5" />
+          <div className="aspect-square animate-pulse bg-white/5" />
           <div className="flex flex-col gap-1.5 p-2.5 sm:gap-2.5 sm:p-4">
             <div className="h-4 w-3/4 animate-pulse rounded bg-white/5" />
             <div className="h-3 w-1/2 animate-pulse rounded bg-white/5" />

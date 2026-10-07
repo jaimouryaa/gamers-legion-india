@@ -49,7 +49,7 @@ export function DealsSection({ deals }: { deals: Game[] }) {
               }}
               className="arcade-card glass-panel flex h-full cursor-pointer flex-col overflow-hidden rounded-xl text-left transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03] hover:border-accent-magenta/40 sm:rounded-2xl"
             >
-              <div className="relative aspect-[4/3]">
+              <div className="relative aspect-square">
                 <CoverArt title={game.title} genre={game.genre} imageUrl={game.coverImage} fit="contain" />
                 <div className="absolute right-1.5 top-1.5 origin-top-right scale-[0.82] sm:right-3 sm:top-3 sm:scale-100">
                   <DiscountBadge percentage={game.discountPercentage} />

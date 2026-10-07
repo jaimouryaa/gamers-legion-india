@@ -41,11 +41,8 @@ export function GameHero({ games }: { games: Game[] }) {
     [games],
   );
 
-  const [isMobile, setIsMobile] = useState(false);
-
-  useEffect(() => {
-    setIsMobile(window.matchMedia("(max-width: 768px)").matches);
-  }, []);
+  // Read once on the client — no state, no extra re-render.
+  const isMobile = typeof window !== "undefined" && window.matchMedia("(max-width: 768px)").matches;
 
   return (
     <section

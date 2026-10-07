@@ -24,7 +24,7 @@ export function BundleSection({ bundles, games }: { bundles: Bundle[]; games: Ga
           viewAllHref="/bundles"
         />
       </ArcadeReveal>
-      <div className="mt-8 grid grid-cols-1 gap-5 lg:grid-cols-2">
+      <div className="mt-8 grid grid-cols-2 gap-2.5 sm:grid-cols-1 sm:gap-5 lg:grid-cols-2">
         {displayList.slice(0, 4).map((bundle, i) => (
           <ArcadeReveal key={bundle.id} delay={i * 0.08}>
             <BundleCard bundle={bundle} onOpen={setActive} />
