@@ -45,22 +45,22 @@ export function Hero() {
         </div>
       </div>
 
-      <div className="relative mx-auto max-w-7xl px-4 py-24 sm:px-6 sm:py-32 lg:px-8">
-        <motion.div variants={container} initial="hidden" animate="show" className="max-w-2xl">
+      <div className="relative mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-28 lg:px-8 lg:py-36">
+        <motion.div variants={container} initial="hidden" animate="show" className="max-w-3xl">
           <motion.p
             variants={item}
-            className="mb-5 text-xs font-semibold tracking-[0.25em] text-accent-primary"
+            className="mb-4 text-sm font-semibold tracking-[0.2em] text-accent-primary sm:mb-5 sm:text-base sm:tracking-[0.25em] lg:text-lg"
           >
             {SITE.name.toUpperCase()}
           </motion.p>
           <motion.h1
             variants={item}
-            className="font-display text-4xl font-bold leading-[1.05] tracking-tight text-text-primary sm:text-5xl lg:text-6xl"
+            className="font-display text-5xl font-bold leading-[1.05] tracking-tight text-text-primary sm:text-6xl lg:text-7xl"
           >
-            Your next game<br />
-            <span className="text-gradient arcade-title">starts here.</span>
+            Join The<br />
+            <span className="text-gradient arcade-title">Legion.</span>
           </motion.h1>
-          <motion.p variants={item} className="mt-6 max-w-lg text-base text-text-secondary sm:text-lg">
+          <motion.p variants={item} className="mt-5 max-w-xl text-lg leading-relaxed text-text-secondary sm:mt-6 sm:text-xl lg:text-2xl">
             {SITE.description}
           </motion.p>
           <motion.div
@@ -73,7 +73,7 @@ export function Hero() {
             }}
             whileTap={{ scale: 0.985 }}
             transition={{ type: "spring", stiffness: 300, damping: 24 }}
-            className="mt-5 inline-flex max-w-lg cursor-default items-start gap-3 rounded-xl border border-[#9B1B30]/30 bg-[#9B1B30]/8 px-4 py-3"
+            className="mt-5 flex w-full max-w-lg cursor-default sm:inline-flex sm:w-auto items-start gap-3 rounded-xl border border-[#9B1B30]/30 bg-[#9B1B30]/8 px-4 py-3"
           >
             <motion.span
               className="mt-0.5 shrink-0 text-[#C4354F]"
@@ -85,12 +85,12 @@ export function Hero() {
               Just drop us a message with the game you want. If it&apos;s playable on PC, we&apos;ll source it and set it up for you on demand.
             </p>
           </motion.div>
-          <motion.div variants={item} className="mt-9 flex flex-wrap items-center gap-3">
-            <LinkButton href="/games" size="lg" className="arcade-cta">
+          <motion.div variants={item} className="mt-7 flex flex-col gap-3 sm:mt-9 sm:flex-row sm:flex-wrap sm:items-center">
+            <LinkButton href="/games" size="lg" className="arcade-cta w-full sm:w-auto">
               Explore games
               <ArrowRight size={18} />
             </LinkButton>
-            <LinkButton href="/deals" variant="secondary" size="lg">
+            <LinkButton href="/deals" variant="secondary" size="lg" className="w-full sm:w-auto">
               Today&apos;s deals
             </LinkButton>
           </motion.div>

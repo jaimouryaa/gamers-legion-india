@@ -9,16 +9,16 @@ const SOCIAL_ICONS: Record<string, typeof InstagramIcon> = {
 export function Footer() {
   return (
     <footer className="border-t border-border-glass bg-surface/30">
-      <div className="mx-auto max-w-7xl px-4 py-14 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 gap-10 sm:grid-cols-4 lg:grid-cols-5">
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
+        <div className="grid grid-cols-2 gap-8 sm:grid-cols-4 lg:grid-cols-5">
           <div className="col-span-2 lg:col-span-2">
             <Link href="/" className="flex items-center gap-2.5">
               {/* eslint-disable-next-line @next/next/no-img-element -- small
                   static brand asset from /public, not worth next/image here */}
               <img src="/logo.png" alt="Gamers Legion India" className="h-9 w-auto" />
             </Link>
-            <p className="mt-4 max-w-xs text-sm text-text-muted">{FOOTER.description}</p>
-            <div className="mt-5 flex items-center gap-3">
+            <p className="mt-3.5 max-w-xs text-xs sm:text-sm text-text-muted">{FOOTER.description}</p>
+            <div className="mt-4 sm:mt-5 flex items-center gap-3">
               {FOOTER.social.map((s) => {
                 const Icon = SOCIAL_ICONS[s.label];
                 return (
@@ -42,7 +42,7 @@ export function Footer() {
           <FooterColumn title="Legal" links={FOOTER.legal} />
         </div>
 
-        <div className="mt-12 border-t border-border-glass pt-6 text-xs text-text-muted">
+        <div className="mt-10 sm:mt-12 border-t border-border-glass pt-6 text-xs text-text-muted">
           © {new Date().getFullYear()} {SITE.name}. All rights reserved.
         </div>
       </div>
@@ -54,10 +54,10 @@ function FooterColumn({ title, links }: { title: string; links: { label: string;
   return (
     <div>
       <h4 className="text-xs font-semibold uppercase tracking-wider text-text-muted">{title}</h4>
-      <ul className="mt-4 flex flex-col gap-2.5">
+      <ul className="mt-3 sm:mt-4 flex flex-col gap-1 sm:gap-2">
         {links.map((l) => (
           <li key={l.label}>
-            <Link href={l.href} className="text-sm text-text-secondary hover:text-text-primary">
+            <Link href={l.href} className="inline-flex min-h-[32px] items-center text-xs sm:text-sm text-text-secondary hover:text-text-primary">
               {l.label}
             </Link>
           </li>

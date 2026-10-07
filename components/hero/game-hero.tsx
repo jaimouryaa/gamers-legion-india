@@ -41,16 +41,22 @@ export function GameHero({ games }: { games: Game[] }) {
     [games],
   );
 
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    setIsMobile(window.matchMedia("(max-width: 768px)").matches);
+  }, []);
+
   return (
     <section
       aria-label="Featured games"
-      className="relative min-h-svh overflow-hidden border-b border-border-glass"
+      className="relative min-h-[90svh] overflow-hidden border-b border-border-glass lg:min-h-svh"
     >
       {/* ── EarthBlaze full-screen background ── */}
       <EarthBlaze
         interactive
         auroraEnabled
-        starCount={1800}
+        starCount={isMobile ? 900 : 1800}
         illumination={1.1}
         surfaceBrightness={1.2}
         style={{
@@ -75,7 +81,7 @@ export function GameHero({ games }: { games: Game[] }) {
       {/* Bottom fade into next section */}
       <div
         aria-hidden
-        className="pointer-events-none absolute bottom-0 left-0 right-0 z-[1] h-32"
+        className="pointer-events-none absolute bottom-0 left-0 right-0 z-[1] h-24 sm:h-32"
         style={{
           background: "linear-gradient(to top, var(--void, #000) 0%, transparent 100%)",
         }}
@@ -86,52 +92,52 @@ export function GameHero({ games }: { games: Game[] }) {
         aria-hidden
         className="pointer-events-none absolute z-[2]"
         style={{
-          right: "5%",
+          right: "2%",
           top: "50%",
           transform: "translateY(-50%)",
-          width: "min(44vw, 500px)",
-          height: "min(44vw, 500px)",
+          width: "min(46vw, 500px)",
+          height: "min(46vw, 500px)",
           opacity: 0.11,
           mixBlendMode: "screen",
         }}
       >
-        <Image src="/gl-logo.webp" alt="" fill className="object-contain" />
+        <Image src="/gl-logo.webp" alt="" fill className="object-contain" priority />
       </div>
 
       {/* ── Main content ── */}
-      <div className="relative z-[3] mx-auto flex min-h-svh max-w-7xl flex-col justify-center px-4 sm:px-6 lg:px-8">
-        <div className="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
+      <div className="relative z-[3] mx-auto flex min-h-[90svh] max-w-7xl flex-col justify-center px-4 sm:px-6 lg:min-h-svh lg:px-8">
+        <div className="grid items-center gap-6 py-6 sm:py-8 lg:grid-cols-2 lg:gap-12 lg:py-0">
 
           {/* Left column: copy + CTAs */}
-          <div className="flex flex-col items-start justify-center py-16 lg:py-24">
+          <div className="flex flex-col items-start justify-center pt-2 pb-2 sm:pt-6 sm:pb-4 lg:py-24">
             {/* Logo + brand name */}
-            <div className="mb-6 flex items-center gap-3">
+            <div className="mb-4 flex items-center gap-2.5 sm:mb-6 sm:gap-3">
               <Image
                 src="/gl-logo.webp"
                 alt="Gamers Legion India logo"
-                width={44}
-                height={44}
-                className="h-10 w-10 object-contain drop-shadow-lg"
+                width={40}
+                height={40}
+                className="h-8 w-8 object-contain drop-shadow-lg sm:h-10 sm:w-10"
                 priority
               />
-              <span className="text-sm font-bold tracking-[0.28em] uppercase text-white/80">
+              <span className="text-xs font-bold tracking-[0.25em] uppercase text-white/80 sm:text-sm sm:tracking-[0.28em]">
                 {SITE.name}
               </span>
             </div>
 
             {/* Headline */}
-            <h1 className="font-display text-[clamp(3.25rem,9vw,6.5rem)] font-bold leading-[0.93] tracking-tight text-white">
+            <h1 className="font-display text-[clamp(2.75rem,8.5vw,6.5rem)] font-bold leading-[0.93] tracking-tight text-white">
               <span className="block">JOIN THE</span>
               <span className="block text-accent-primary">LEGION.</span>
             </h1>
 
             {/* Sub-copy */}
-            <p className="mt-6 max-w-sm text-lg leading-relaxed text-white/70 sm:text-xl">
+            <p className="mt-3.5 max-w-sm text-base leading-relaxed text-white/70 sm:mt-5 sm:text-lg sm:leading-relaxed">
               Explore games across every genre, platform and world.
             </p>
 
             {/* CTA buttons */}
-            <div className="mt-9 flex flex-wrap items-center gap-3">
+            <div className="mt-6 flex flex-wrap items-center gap-3 sm:mt-8">
               <LinkButton href="/games" size="lg" className="arcade-cta">
                 Explore Games
                 <ArrowRight size={18} />
@@ -144,7 +150,7 @@ export function GameHero({ games }: { games: Game[] }) {
 
           {/* Right column: Game Wheel (swipe up/down directly over the cards) */}
           <div
-            className="relative flex h-[55svh] items-center justify-center lg:h-[min(78svh,740px)]"
+            className="relative flex h-[48svh] min-h-[300px] max-h-[500px] items-center justify-center sm:h-[52svh] lg:h-[min(78svh,740px)] lg:max-h-none"
             onPointerDown={dismissHint}
             onWheel={dismissHint}
           >

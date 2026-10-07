@@ -32,7 +32,7 @@ export function DealsSection({ deals }: { deals: Game[] }) {
           viewAllHref="/deals"
         />
       </ArcadeReveal>
-      <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
         {deals.slice(0, 8).map((game, i) => {
           const wishlisted = isWishlisted(game.id);
           return (
@@ -47,11 +47,11 @@ export function DealsSection({ deals }: { deals: Game[] }) {
                   setActive(game);
                 }
               }}
-              className="arcade-card glass-panel flex h-full cursor-pointer flex-col overflow-hidden rounded-2xl text-left transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03] hover:border-accent-magenta/40"
+              className="arcade-card glass-panel flex h-full cursor-pointer flex-col overflow-hidden rounded-xl text-left transition-all duration-300 hover:-translate-y-1 hover:scale-[1.03] hover:border-accent-magenta/40 sm:rounded-2xl"
             >
               <div className="relative aspect-[4/3]">
                 <CoverArt title={game.title} genre={game.genre} imageUrl={game.coverImage} fit="contain" />
-                <div className="absolute right-3 top-3">
+                <div className="absolute right-1.5 top-1.5 origin-top-right scale-[0.82] sm:right-3 sm:top-3 sm:scale-100">
                   <DiscountBadge percentage={game.discountPercentage} />
                 </div>
                 <button
@@ -69,16 +69,28 @@ export function DealsSection({ deals }: { deals: Game[] }) {
                   }}
                   aria-label={wishlisted ? "Remove from wishlist" : "Add to wishlist"}
                   aria-pressed={wishlisted}
-                  className="absolute left-3 top-3 flex h-8 w-8 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-transform hover:scale-110 active:scale-95"
+                  className="absolute left-1.5 top-1.5 flex h-6 w-6 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm transition-transform hover:scale-110 active:scale-95 sm:left-3 sm:top-3 sm:h-8 sm:w-8"
                 >
-                  <Heart size={15} className={cn(wishlisted && "fill-accent-magenta text-accent-magenta")} />
+                  <Heart size={14} className={cn("h-3 w-3 sm:h-[15px] sm:w-[15px]", wishlisted && "fill-accent-magenta text-accent-magenta")} />
                 </button>
               </div>
-              <div className="flex flex-1 flex-col gap-2.5 p-4">
-                <h3 className="font-display text-sm font-semibold text-text-primary">{game.title}</h3>
-                <Rating value={game.rating} count={game.reviewCount} />
-                <Price original={game.originalPrice} sale={game.salePrice} />
-                {game.dealExpiry && <Countdown expiresAt={game.dealExpiry} />}
+              <div className="flex flex-1 flex-col justify-between gap-1.5 p-2.5 sm:gap-2.5 sm:p-4">
+                <div>
+                  <h3 className="line-clamp-2 font-display text-xs font-semibold leading-snug text-text-primary sm:text-sm">{game.title}</h3>
+                  <div className="mt-1 origin-left max-sm:scale-[0.85]">
+                    <Rating value={game.rating} count={game.reviewCount} />
+                  </div>
+                </div>
+                <div className="mt-auto flex flex-col gap-1 sm:gap-1.5">
+                  <div className="origin-bottom-left max-sm:scale-[0.9]">
+                    <Price original={game.originalPrice} sale={game.salePrice} />
+                  </div>
+                  {game.dealExpiry && (
+                    <div className="origin-left max-sm:scale-[0.85] max-sm:-mt-1">
+                      <Countdown expiresAt={game.dealExpiry} />
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
             </ArcadeReveal>

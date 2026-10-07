@@ -18,25 +18,25 @@ export function ProofSection({ proofs }: { proofs: Proof[] }) {
           viewAllHref="/proof"
         />
       </ArcadeReveal>
-      <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-8 grid grid-cols-2 gap-3 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4">
         {proofs.slice(0, 4).map((proof, i) => (
           <ArcadeReveal key={proof.id} delay={i * 0.08}>
-          <div className="arcade-card glass-panel overflow-hidden rounded-2xl">
+          <div className="arcade-card glass-panel overflow-hidden rounded-xl sm:rounded-2xl">
             <div className="relative aspect-video">
               <CoverArt title={proof.caption ?? "Delivery proof"} imageUrl={proof.imageUrl} fit="contain" />
             </div>
             {(proof.caption || proof.gameTitle) && (
-              <div className="flex flex-col gap-1.5 p-3.5">
+              <div className="flex flex-col gap-1 p-2.5 sm:gap-1.5 sm:p-3.5">
                 {proof.caption && (
-                  <p className="line-clamp-2 text-xs text-text-secondary">{proof.caption}</p>
+                  <p className="line-clamp-2 text-[11px] sm:text-xs text-text-secondary">{proof.caption}</p>
                 )}
                 {proof.gameTitle && proof.gameSlug && (
                   <Link
                     href={`/games/${proof.gameSlug}`}
-                    className="flex w-fit items-center gap-1 text-xs font-medium text-accent-cyan hover:underline"
+                    className="flex w-fit items-center gap-1 text-[11px] sm:text-xs font-medium text-accent-cyan hover:underline"
                   >
                     <Gamepad2 size={11} />
-                    {proof.gameTitle}
+                    <span className="truncate">{proof.gameTitle}</span>
                   </Link>
                 )}
               </div>

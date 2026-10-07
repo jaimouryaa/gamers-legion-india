@@ -1,8 +1,16 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Chakra_Petch, Inter } from "next/font/google";
 import { Toaster } from "sonner";
- import WelcomeIntro from "@/components/site/welcome-intro";
+import WelcomeIntro from "@/components/site/welcome-intro";
 import "./globals.css";
+
+export const viewport: Viewport = {
+  themeColor: "#050505",
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  viewportFit: "cover",
+};
 
 const chakra = Chakra_Petch({
   variable: "--font-chakra",
@@ -44,7 +52,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="en"
       className={`${chakra.variable} ${inter.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-void" suppressHydrationWarning>
+      <body className="min-h-full flex flex-col bg-void overflow-x-hidden" suppressHydrationWarning>
         <WelcomeIntro />  
         {children}
         <Toaster

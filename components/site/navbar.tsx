@@ -174,7 +174,7 @@ export function Navbar() {
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder="Search games, genres, platforms..."
-                  className="w-full bg-transparent text-sm text-text-primary placeholder:text-text-muted focus:outline-none"
+                  className="w-full bg-transparent text-base sm:text-sm text-text-primary placeholder:text-text-muted focus:outline-none"
                 />
               </div>
             </form>
@@ -196,14 +196,14 @@ export function Navbar() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="rounded-lg px-3 py-2.5 text-sm font-medium text-text-secondary hover:bg-white/5 hover:text-text-primary"
+                  className="flex min-h-[44px] items-center rounded-lg px-3.5 py-2.5 text-base sm:text-sm font-medium text-text-secondary hover:bg-white/5 hover:text-text-primary active:bg-white/10"
                 >
                   {link.label}
                 </Link>
               ))}
               <Link
                 href="/admin"
-                className="rounded-lg px-3 py-2.5 text-sm font-medium text-text-secondary hover:bg-white/5 hover:text-text-primary"
+                className="flex min-h-[44px] items-center rounded-lg px-3.5 py-2.5 text-base sm:text-sm font-medium text-text-secondary hover:bg-white/5 hover:text-text-primary active:bg-white/10"
               >
                 Admin
               </Link>
@@ -212,18 +212,18 @@ export function Navbar() {
                 href={CONNECT.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-text-secondary hover:bg-white/5 hover:text-text-primary"
+                className="flex min-h-[44px] items-center gap-3 rounded-lg px-3.5 py-2.5 text-base sm:text-sm font-medium text-text-secondary hover:bg-white/5 hover:text-text-primary active:bg-white/10"
               >
-                <InstagramIcon size={16} className="text-accent-magenta" />
+                <InstagramIcon size={18} className="text-accent-magenta" />
                 Instagram
               </a>
               <a
                 href={buildWhatsAppGeneralLink()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-text-secondary hover:bg-white/5 hover:text-text-primary"
+                className="flex min-h-[44px] items-center gap-3 rounded-lg px-3.5 py-2.5 text-base sm:text-sm font-medium text-text-secondary hover:bg-white/5 hover:text-text-primary active:bg-white/10"
               >
-                <MessageCircle size={16} className="text-success" />
+                <MessageCircle size={18} className="text-success" />
                 WhatsApp
               </a>
             </nav>
