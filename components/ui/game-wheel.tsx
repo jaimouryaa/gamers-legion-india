@@ -21,73 +21,79 @@ export interface GameWheelHandle {
 interface GameWheelProps {
   items: GameWheelItem[];
   onActiveChange?: (index: number) => void;
-  /** Let the mouse wheel rotate the covers while the pointer is over the wheel. */
+  /** Let the mouse/trackpad wheel rotate the covers while the pointer is over the wheel. */
   captureWheel?: boolean;
   className?: string;
 }
 
-// Geometry (tuned for portrait covers)
-const STEP = 24; // degrees between neighbouring covers
-const MAX_ANGLE = 72; // covers beyond this are hidden
-const CARD_RATIO = 1.0; // width / height  (1:1 square covers)
+// ── Geometry ────────────────────────────────────────────────────────────────
+const STEP = 24;        // degrees between neighbouring covers
+const MAX_ANGLE = 72;   // covers beyond this angle are hidden
+const CARD_RATIO = 1.0; // width / height (1:1 square)
 const PERSPECTIVE = 1800;
+// Mobile breakpoint: below lg (1024px) → horizontal carousel
+const MOBILE_BP = 1024;
 
 const clamp = (v: number, a = 0, b = 1) => Math.min(b, Math.max(a, v));
-const wrap = (d: number, n: number) => ((((d + n / 2) % n) + n) % n) - n / 2;
+const wrap  = (d: number, n: number) => ((((d + n / 2) % n) + n) % n) - n / 2;
 
 export const GameWheel = forwardRef<GameWheelHandle, GameWheelProps>(function GameWheel(
   { items, onActiveChange, captureWheel = true, className = "" },
   ref,
 ) {
-  const router = useRouter();
-  const stageRef = useRef<HTMLDivElement>(null);
-  const drumRef = useRef<HTMLDivElement>(null);
-  const cardRefs = useRef<(HTMLAnchorElement | null)[]>([]);
-  const glowRefs = useRef<(HTMLSpanElement | null)[]>([]);
+  const router       = useRouter();
+  const stageRef     = useRef<HTMLDivElement>(null);
+  const drumRef      = useRef<HTMLDivElement>(null);
+  const cardRefs     = useRef<(HTMLAnchorElement | null)[]>([]);
+  const glowRefs     = useRef<(HTMLSpanElement | null)[]>([]);
   const suppressClick = useRef(false);
-  const activeCb = useRef(onActiveChange);
-  const api = useRef<{ goTo: (i: number) => void; step: (d: number) => void; active: () => number }>({ goTo: (_i) => {}, step: (_d) => {}, active: () => 0 });
+  const activeCb     = useRef(onActiveChange);
+  const api = useRef<{ goTo: (i: number) => void; step: (d: number) => void; active: () => number }>(
+    { goTo: (_i) => {}, step: (_d) => {}, active: () => 0 },
+  );
   const n = items.length;
 
-  useEffect(() => {
-    activeCb.current = onActiveChange;
-  }, [onActiveChange]);
+  useEffect(() => { activeCb.current = onActiveChange; }, [onActiveChange]);
 
-  useImperativeHandle(
-    ref,
-    () => ({
-      goTo: (i: number) => api.current.goTo(i),
-      step: (d: number) => api.current.step(d),
-    }),
-    [],
-  );
+  useImperativeHandle(ref, () => ({
+    goTo: (i: number) => api.current.goTo(i),
+    step: (d: number) => api.current.step(d),
+  }), []);
 
   useEffect(() => {
     const stage = stageRef.current;
-    const drum = drumRef.current;
+    const drum  = drumRef.current;
     if (!stage || !drum || n === 0) return;
 
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const st = { turn: 0, target: 0, raf: 0, last: 0, W: 270, H: 400, R: 1200, active: -1 };
-    let wheelTimer = 0;
+
+    // ── State ──────────────────────────────────────────────────────────────
+    const st = {
+      turn: 0, target: 0, raf: 0, last: 0,
+      W: 270, H: 400, R: 1200,
+      active: -1,
+      /** true = horizontal carousel (mobile), false = vertical (desktop) */
+      horiz: false,
+    };
+    let wheelTimer    = 0;
     let suppressTimer = 0;
 
-    // Direct DOM writes (no React renders per frame).
+    // ── Render ─────────────────────────────────────────────────────────────
     const render = () => {
       const act = ((Math.round(st.turn) % n) + n) % n;
       for (let i = 0; i < n; i++) {
         const card = cardRefs.current[i];
         if (!card) continue;
-        const a = (n > 1 ? wrap(i - st.turn, n) : 0) * STEP;
+        const a   = (n > 1 ? wrap(i - st.turn, n) : 0) * STEP;
         const abs = Math.abs(a);
-        if (abs > MAX_ANGLE) {
-          card.style.visibility = "hidden";
-          continue;
-        }
+        if (abs > MAX_ANGLE) { card.style.visibility = "hidden"; continue; }
         const strength = clamp(1 - abs / (STEP * 1.1));
         card.style.visibility = "visible";
-        card.style.opacity = String(1 - Math.pow(abs / MAX_ANGLE, 1.4) * 0.95);
-        card.style.transform = `translate(-50%,-50%) rotateX(${-a}deg) translateZ(${st.R}px) scale(${1 + 0.04 * strength})`;
+        card.style.opacity    = String(1 - Math.pow(abs / MAX_ANGLE, 1.4) * 0.95);
+        // Horizontal → rotateY (left-right fan), Vertical → rotateX (up-down fan)
+        card.style.transform  = st.horiz
+          ? `translate(-50%,-50%) rotateY(${a}deg) translateZ(${st.R}px) scale(${1 + 0.04 * strength})`
+          : `translate(-50%,-50%) rotateX(${-a}deg) translateZ(${st.R}px) scale(${1 + 0.04 * strength})`;
         const glow = glowRefs.current[i];
         if (glow) glow.style.opacity = String(strength);
       }
@@ -99,97 +105,126 @@ export const GameWheel = forwardRef<GameWheelHandle, GameWheelProps>(function Ga
       }
     };
 
+    // ── Layout ─────────────────────────────────────────────────────────────
     const layout = () => {
-      const r = stage.getBoundingClientRect();
-      let H = Math.min(r.height * 0.6, 580);
-      let W = H * CARD_RATIO;
-      if (W > r.width * 0.68) {
-        W = r.width * 0.68;
+      const r      = stage.getBoundingClientRect();
+      st.horiz     = window.innerWidth < MOBILE_BP;
+
+      let W: number, H: number;
+      if (st.horiz) {
+        // Horizontal: card width drives; ~52% of container width, capped at 280px
+        W = Math.min(r.width * 0.52, 280);
         H = W / CARD_RATIO;
+        // Make sure card isn't taller than 85% of stage height
+        if (H > r.height * 0.85) { H = r.height * 0.85; W = H * CARD_RATIO; }
+        st.R = (W * 1.12) / ((STEP * Math.PI) / 180);
+      } else {
+        // Vertical: card height drives
+        H = Math.min(r.height * 0.6, 580);
+        W = H * CARD_RATIO;
+        if (W > r.width * 0.68) { W = r.width * 0.68; H = W / CARD_RATIO; }
+        st.R = (H * 1.12) / ((STEP * Math.PI) / 180);
       }
-      st.W = W;
-      st.H = H;
-      st.R = (H * 1.12) / ((STEP * Math.PI) / 180);
+      st.W = W; st.H = H;
+
       drum.style.transform = `translateZ(${-st.R}px)`;
       for (const c of cardRefs.current) {
-        if (c) {
-          c.style.width = `${W}px`;
-          c.style.height = `${H}px`;
-        }
+        if (c) { c.style.width = `${W}px`; c.style.height = `${H}px`; }
       }
+
+      // Allow page to scroll vertically on mobile (pan-y), capture all on desktop
+      stage.style.touchAction = st.horiz ? "pan-y" : "none";
+
       render();
       stage.style.opacity = "1";
     };
 
+    // ── Animation loop ─────────────────────────────────────────────────────
     const tick = (now: number) => {
-      const dt = Math.min((now - st.last) / 1000, 0.05) || 0.016;
-      st.last = now;
+      const dt   = Math.min((now - st.last) / 1000, 0.05) || 0.016;
+      st.last    = now;
       const diff = st.target - st.turn;
       if (reduce || Math.abs(diff) < 0.001) {
-        st.turn = st.target;
-        st.raf = 0;
-        render();
-        return;
+        st.turn = st.target; st.raf = 0; render(); return;
       }
       st.turn += diff * (1 - Math.exp(-dt * 9));
       render();
       st.raf = requestAnimationFrame(tick);
     };
     const kick = () => {
-      if (!st.raf) {
-        st.last = performance.now();
-        st.raf = requestAnimationFrame(tick);
-      }
+      if (!st.raf) { st.last = performance.now(); st.raf = requestAnimationFrame(tick); }
     };
 
     api.current = {
       goTo: (index) => {
         const base = Math.round(st.target);
-        const cur = ((base % n) + n) % n;
-        st.target = base + (n > 1 ? wrap(index - cur, n) : 0);
+        const cur  = ((base % n) + n) % n;
+        st.target  = base + (n > 1 ? wrap(index - cur, n) : 0);
         kick();
       },
-      step: (d) => {
-        st.target = Math.round(st.target) + d;
-        kick();
-      },
+      step: (d) => { st.target = Math.round(st.target) + d; kick(); },
       active: () => (st.active < 0 ? 0 : st.active) as number,
     };
 
-    // Mouse wheel (only while the pointer is over the wheel).
+    // ── Mouse / trackpad wheel ─────────────────────────────────────────────
     const onWheel = (e: WheelEvent) => {
       if (!captureWheel || e.ctrlKey || n < 2) return;
-      if (Math.abs(e.deltaY) < Math.abs(e.deltaX)) return;
-      e.preventDefault();
-      const dy = clamp(e.deltaY * (e.deltaMode === 1 ? 16 : 1), -120, 120);
-      st.target = clamp(st.target + dy * 0.006, st.turn - 3, st.turn + 3);
+
+      if (st.horiz) {
+        // Horizontal mode: respond to horizontal scroll (trackpad swipe / shift+scroll)
+        if (Math.abs(e.deltaX) < Math.abs(e.deltaY)) return; // ignore mostly-vertical
+        e.preventDefault();
+        const dx = clamp(e.deltaX * (e.deltaMode === 1 ? 16 : 1), -120, 120);
+        st.target = clamp(st.target + dx * 0.006, st.turn - 3, st.turn + 3);
+      } else {
+        // Vertical mode: respond to vertical scroll
+        if (Math.abs(e.deltaY) < Math.abs(e.deltaX)) return;
+        e.preventDefault();
+        const dy = clamp(e.deltaY * (e.deltaMode === 1 ? 16 : 1), -120, 120);
+        st.target = clamp(st.target + dy * 0.006, st.turn - 3, st.turn + 3);
+      }
       kick();
       window.clearTimeout(wheelTimer);
-      wheelTimer = window.setTimeout(() => {
-        st.target = Math.round(st.target);
-        kick();
-      }, 140);
+      wheelTimer = window.setTimeout(() => { st.target = Math.round(st.target); kick(); }, 140);
     };
 
-    // Drag: vertical for both mouse and touch (rotating the wheel up and down).
+    // ── Pointer drag ───────────────────────────────────────────────────────
     let drag: { id: number; x: number; y: number; t0: number; moved: boolean } | null = null;
+
     const onDown = (e: PointerEvent) => {
       if (e.pointerType === "mouse" && e.button !== 0) return;
       drag = { id: e.pointerId, x: e.clientX, y: e.clientY, t0: st.target, moved: false };
     };
+
     const onMove = (e: PointerEvent) => {
       if (!drag || e.pointerId !== drag.id) return;
-      const dy = drag.y - e.clientY;
-      if (!drag.moved) {
-        if (Math.abs(dy) < 6) return;
-        drag.moved = true;
-        try {
-          stage.setPointerCapture(e.pointerId);
-        } catch {}
+
+      if (st.horiz) {
+        // Horizontal: left swipe = next card, right swipe = previous
+        const dx     = drag.x - e.clientX; // positive = swiped left = forward
+        const dy_abs = Math.abs(e.clientY - drag.y);
+        const dx_abs = Math.abs(dx);
+        if (!drag.moved) {
+          if (dx_abs < 6) return;
+          // Bail if the gesture is more vertical than horizontal (let page scroll)
+          if (dy_abs > dx_abs * 1.5) { drag = null; return; }
+          drag.moved = true;
+          try { stage.setPointerCapture(e.pointerId); } catch {}
+        }
+        st.target = drag.t0 + dx / (st.W * 0.55);
+      } else {
+        // Vertical: swipe up = next card
+        const dy = drag.y - e.clientY;
+        if (!drag.moved) {
+          if (Math.abs(dy) < 6) return;
+          drag.moved = true;
+          try { stage.setPointerCapture(e.pointerId); } catch {}
+        }
+        st.target = drag.t0 + dy / (st.H * 0.55);
       }
-      st.target = drag.t0 + dy / (st.H * 0.55);
       kick();
     };
+
     const onUp = (e: PointerEvent) => {
       if (!drag || e.pointerId !== drag.id) return;
       if (drag.moved) {
@@ -202,49 +237,39 @@ export const GameWheel = forwardRef<GameWheelHandle, GameWheelProps>(function Ga
       kick();
     };
 
+    // ── Bootstrap ──────────────────────────────────────────────────────────
     const ro = new ResizeObserver(layout);
     ro.observe(stage);
     layout();
 
-    stage.addEventListener("wheel", onWheel, { passive: false });
-    stage.addEventListener("pointerdown", onDown);
-    stage.addEventListener("pointermove", onMove);
-    stage.addEventListener("pointerup", onUp);
-    stage.addEventListener("pointercancel", onUp);
+    stage.addEventListener("wheel",        onWheel, { passive: false });
+    stage.addEventListener("pointerdown",  onDown);
+    stage.addEventListener("pointermove",  onMove);
+    stage.addEventListener("pointerup",    onUp);
+    stage.addEventListener("pointercancel",onUp);
 
     return () => {
       cancelAnimationFrame(st.raf);
       window.clearTimeout(wheelTimer);
       window.clearTimeout(suppressTimer);
       ro.disconnect();
-      stage.removeEventListener("wheel", onWheel);
-      stage.removeEventListener("pointerdown", onDown);
-      stage.removeEventListener("pointermove", onMove);
-      stage.removeEventListener("pointerup", onUp);
-      stage.removeEventListener("pointercancel", onUp);
+      stage.removeEventListener("wheel",        onWheel);
+      stage.removeEventListener("pointerdown",  onDown);
+      stage.removeEventListener("pointermove",  onMove);
+      stage.removeEventListener("pointerup",    onUp);
+      stage.removeEventListener("pointercancel",onUp);
     };
   }, [items, n, captureWheel]);
 
+  // ── Keyboard ──────────────────────────────────────────────────────────────
   const onKeyDown = (e: React.KeyboardEvent) => {
     switch (e.key) {
       case "ArrowDown":
-      case "ArrowRight":
-        e.preventDefault();
-        api.current.step(1);
-        break;
+      case "ArrowRight": e.preventDefault(); api.current.step(1);  break;
       case "ArrowUp":
-      case "ArrowLeft":
-        e.preventDefault();
-        api.current.step(-1);
-        break;
-      case "Home":
-        e.preventDefault();
-        api.current.goTo(0);
-        break;
-      case "End":
-        e.preventDefault();
-        api.current.goTo(n - 1);
-        break;
+      case "ArrowLeft":  e.preventDefault(); api.current.step(-1); break;
+      case "Home":       e.preventDefault(); api.current.goTo(0);  break;
+      case "End":        e.preventDefault(); api.current.goTo(n - 1); break;
       case "Enter":
         if (e.target === e.currentTarget && items[api.current.active()]) {
           e.preventDefault();
@@ -264,6 +289,7 @@ export const GameWheel = forwardRef<GameWheelHandle, GameWheelProps>(function Ga
       tabIndex={0}
       onKeyDown={onKeyDown}
       className={`relative cursor-grab select-none overflow-hidden rounded-2xl opacity-0 outline-none transition-opacity duration-500 focus-visible:ring-2 focus-visible:ring-accent-primary/60 active:cursor-grabbing ${className}`}
+      // touchAction is set dynamically in layout() based on orientation
       style={{ perspective: PERSPECTIVE, touchAction: "none" }}
     >
       <div ref={drumRef} className="absolute inset-0" style={{ transformStyle: "preserve-3d" }}>
@@ -278,24 +304,18 @@ export const GameWheel = forwardRef<GameWheelHandle, GameWheelProps>(function Ga
             tabIndex={-1}
             draggable={false}
             prefetch={false}
-            ref={(el) => {
-              cardRefs.current[i] = el;
-            }}
-            onClick={(e) => {
-              if (suppressClick.current) e.preventDefault();
-            }}
+            ref={(el) => { cardRefs.current[i] = el; }}
+            onClick={(e) => { if (suppressClick.current) e.preventDefault(); }}
             className="absolute left-1/2 top-1/2 block cursor-pointer will-change-transform [backface-visibility:hidden] [&_img]:pointer-events-none [&_video]:pointer-events-none"
             style={{ visibility: i === 0 ? "visible" : "hidden" }}
           >
-            {/* Stronger shadow that fades in on the active cover (opacity only, cheap to animate) */}
+            {/* Glow shadow that strengthens on the active cover */}
             <span
-              ref={(el) => {
-                glowRefs.current[i] = el;
-              }}
+              ref={(el) => { glowRefs.current[i] = el; }}
               aria-hidden
               className="pointer-events-none absolute inset-0 rounded-[10px] opacity-0 shadow-[0_34px_70px_-18px_rgba(0,0,0,0.6)]"
             />
-            {/* The cover is the card: artwork only, subtle border and shadow */}
+            {/* Cover artwork */}
             <span className="relative block h-full w-full overflow-hidden rounded-[10px] shadow-[0_14px_30px_-14px_rgba(0,0,0,0.45)] ring-1 ring-black/10 transition-transform duration-200 hover:-translate-y-0.5 dark:ring-white/10">
               <CoverArt title={it.title} genre={it.genre} imageUrl={it.image} />
             </span>

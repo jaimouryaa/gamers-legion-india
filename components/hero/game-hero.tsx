@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowRight, ChevronUp, ChevronDown } from "lucide-react";
+import { ArrowRight, ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from "lucide-react";
 import { LinkButton } from "@/components/ui/button";
 import { EarthBlaze } from "@/components/ui/earth-blaze";
 import { GameWheel, type GameWheelHandle, type GameWheelItem } from "@/components/ui/game-wheel";
@@ -145,13 +145,14 @@ export function GameHero({ games }: { games: Game[] }) {
             </div>
           </div>
 
-          {/* Right column: Game Wheel (swipe up/down directly over the cards) */}
+          {/* Right column: Game Wheel */}
           <div
             className="relative flex h-[48svh] min-h-[300px] max-h-[500px] items-center justify-center sm:h-[52svh] lg:h-[min(78svh,740px)] lg:max-h-none"
             onPointerDown={dismissHint}
             onWheel={dismissHint}
           >
-            <div className="relative h-full w-full max-w-[320px] sm:max-w-sm lg:max-w-md">
+            {/* Full-width on mobile so the horizontal fan has room; constrained on desktop */}
+            <div className="relative h-full w-full lg:max-w-md">
               <GameWheel ref={wheel} items={items} className="h-full w-full" />
 
               {/* ── Gesture hint overlay ── */}
@@ -159,13 +160,19 @@ export function GameHero({ games }: { games: Game[] }) {
                 <div
                   aria-hidden
                   className="pointer-events-none absolute inset-0 flex flex-col items-center justify-between py-6"
-                  style={{
-                    transition: "opacity 600ms ease",
-                    opacity: hintFading ? 0 : 1,
-                  }}
+                  style={{ transition: "opacity 600ms ease", opacity: hintFading ? 0 : 1 }}
                 >
-                  {/* Top hint: drag / swipe up/down */}
-                  <div className="flex flex-col items-center gap-1.5">
+                  {/* Mobile hint: swipe left / right */}
+                  <div className="flex flex-col items-center gap-1.5 lg:hidden">
+                    <div className="flex items-center gap-1.5 rounded-full border border-white/15 bg-black/70 px-3.5 py-1.5 text-[11px] font-medium tracking-wide text-white/90 shadow-md backdrop-blur-md">
+                      <ChevronLeft size={13} className="animate-bounce text-accent-primary" />
+                      <span>Swipe left / right on cards</span>
+                      <ChevronRight size={13} className="animate-bounce text-accent-primary" />
+                    </div>
+                  </div>
+
+                  {/* Desktop hint: swipe up / down */}
+                  <div className="hidden flex-col items-center gap-1.5 lg:flex">
                     <div className="flex items-center gap-1.5 rounded-full border border-white/15 bg-black/70 px-3.5 py-1.5 text-[11px] font-medium tracking-wide text-white/90 shadow-md backdrop-blur-md">
                       <ChevronUp size={13} className="animate-bounce text-accent-primary" />
                       <span>Swipe up / down on cards</span>
@@ -173,7 +180,7 @@ export function GameHero({ games }: { games: Game[] }) {
                     </div>
                   </div>
 
-                  {/* Desktop subtle scroll wheel note */}
+                  {/* Desktop scroll wheel note */}
                   <div className="hidden flex-col items-center gap-1 lg:flex">
                     <span className="rounded-full border border-white/10 bg-black/50 px-3 py-1 text-[10px] tracking-widest text-white/50 uppercase backdrop-blur-sm">
                       Scroll wheel or drag to browse
