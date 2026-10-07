@@ -15,6 +15,7 @@ export interface GameWheelItem {
 
 export interface GameWheelHandle {
   goTo: (index: number) => void;
+  step: (delta: number) => void;
 }
 
 interface GameWheelProps {
@@ -52,7 +53,14 @@ export const GameWheel = forwardRef<GameWheelHandle, GameWheelProps>(function Ga
     activeCb.current = onActiveChange;
   }, [onActiveChange]);
 
-  useImperativeHandle(ref, () => ({ goTo: (i: number) => api.current.goTo(i) }), []);
+  useImperativeHandle(
+    ref,
+    () => ({
+      goTo: (i: number) => api.current.goTo(i),
+      step: (d: number) => api.current.step(d),
+    }),
+    [],
+  );
 
   useEffect(() => {
     const stage = stageRef.current;
@@ -163,23 +171,23 @@ export const GameWheel = forwardRef<GameWheelHandle, GameWheelProps>(function Ga
       }, 140);
     };
 
-    // Drag: vertical with a mouse; horizontal swipe on touch (keeps page scrolling free).
-    let drag: { id: number; x: number; y: number; t0: number; touch: boolean; moved: boolean } | null = null;
+    // Drag: vertical for both mouse and touch (rotating the wheel up and down).
+    let drag: { id: number; x: number; y: number; t0: number; moved: boolean } | null = null;
     const onDown = (e: PointerEvent) => {
       if (e.pointerType === "mouse" && e.button !== 0) return;
-      drag = { id: e.pointerId, x: e.clientX, y: e.clientY, t0: st.target, touch: e.pointerType === "touch", moved: false };
+      drag = { id: e.pointerId, x: e.clientX, y: e.clientY, t0: st.target, moved: false };
     };
     const onMove = (e: PointerEvent) => {
       if (!drag || e.pointerId !== drag.id) return;
-      const d = drag.touch ? drag.x - e.clientX : drag.y - e.clientY;
+      const dy = drag.y - e.clientY;
       if (!drag.moved) {
-        if (Math.abs(d) < 6) return;
+        if (Math.abs(dy) < 6) return;
         drag.moved = true;
         try {
           stage.setPointerCapture(e.pointerId);
         } catch {}
       }
-      st.target = drag.t0 + d / (drag.touch ? st.W * 0.75 : st.H * 0.55);
+      st.target = drag.t0 + dy / (st.H * 0.55);
       kick();
     };
     const onUp = (e: PointerEvent) => {
@@ -256,7 +264,7 @@ export const GameWheel = forwardRef<GameWheelHandle, GameWheelProps>(function Ga
       tabIndex={0}
       onKeyDown={onKeyDown}
       className={`relative cursor-grab select-none overflow-hidden rounded-2xl opacity-0 outline-none transition-opacity duration-500 focus-visible:ring-2 focus-visible:ring-accent-primary/60 active:cursor-grabbing ${className}`}
-      style={{ perspective: PERSPECTIVE, touchAction: "pan-y" }}
+      style={{ perspective: PERSPECTIVE, touchAction: "none" }}
     >
       <div ref={drumRef} className="absolute inset-0" style={{ transformStyle: "preserve-3d" }}>
         {items.map((it, i) => (
