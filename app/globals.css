@@ -279,6 +279,11 @@ body {
   to { opacity: 0.45; transform: scale(1.16); }
 }
 
+@keyframes proof-marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
 .input {
   height: 2.75rem;
   border-radius: 0.75rem;

@@ -46,7 +46,7 @@ export default async function ProofPage() {
           <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {proofs.map((proof) => (
               <div key={proof.id} className="glass-panel overflow-hidden rounded-2xl">
-                <div className="relative aspect-video">
+                <div className="relative w-full" style={{ aspectRatio: "9/16" }}>
                   <CoverArt title={proof.caption ?? "Delivery proof"} imageUrl={proof.imageUrl} fit="contain" />
                 </div>
                 {(proof.caption || proof.gameTitle) && (
