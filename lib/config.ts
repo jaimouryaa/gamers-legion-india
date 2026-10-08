@@ -77,12 +77,12 @@ export const FOOTER = {
     { label: "Refund Policy", href: "/refund-policy" },
   ],
   social: [
-    { label: "Instagram", href: "https://www.instagram.com/gamerss_legion_india/" },
+    { label: "Instagram", href: "https://www.instagram.com/gamers_legionn_india/" },
   ],
 };
 
 export const CONNECT = {
-  instagram: "https://www.instagram.com/gamerss_legion_india/",
+  instagram: "https://www.instagram.com/gamers_legionn_india/",
 };
 
 export const ACTIVATION_GUIDES = [
